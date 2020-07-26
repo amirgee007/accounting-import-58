@@ -52,8 +52,6 @@ class UpdateOnlyStockFileCommand extends Command
             $this->createStockExcelFile();
 
             Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!working');
-
-            SyncJob::truncate();
         }
         else
         {
@@ -70,11 +68,11 @@ class UpdateOnlyStockFileCommand extends Command
 
         try {
 
-            $result_size = 500;
+            $result_size = 1000;
 
             $page_count = 1;
 
-            $max_pages = (env('APP_ENV') == 'local') ?  5 : 1000;
+            $max_pages = (env('APP_ENV') == 'local') ?  5 : 100;
 
             Log::info('its ok to have these pages on live' .$max_pages);
             $taxPercentage = $setting->value;
@@ -112,16 +110,14 @@ class UpdateOnlyStockFileCommand extends Command
 
             Excel::store(new StockFileExport($allDataArrStock), $pathStock);
 
-            Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
-
-            SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
-
             Log::alert('createStockFileS Created successfully....!');
 
         } catch (\Exception $ex) {
             Log::error(' JOB FAILED createStockFileShopify. '.$ex->getMessage() . $ex->getLine());
             SyncJob::where('type', 'stock-export')->update(['status' => 'failed']);
         }
+
+        SyncJob::truncate();
 
     }
 

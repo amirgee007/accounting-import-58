@@ -6,7 +6,7 @@
             <div class="col-md-10">
                 <div class="card">
                     <div class="card-header">Dashboard (Auto update after every hour)
-                        <span class="badge badge-danger float-right">Last Updated: {{@$lastUpdate->value}}</span></div>
+                        <span class="badge badge-danger float-right">Last Updated Shopify file:{{@$lastUpdate->value}}</span></div>
 
                     <div class="card-body">
                         <form method="POST" action="{{route('tax.update')}}">

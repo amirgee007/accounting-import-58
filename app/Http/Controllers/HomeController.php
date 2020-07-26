@@ -77,14 +77,20 @@ class HomeController extends Controller
         $jb = new UpdateOnlyShopifyFileCommand();
         $jb->createStockShopifyOutPutExcelFile();
 
-        # check if there is product sync job
-        $activeJob = SyncJob::activeStatus('stock-export')->first();
+        Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
 
-        if (!$activeJob) {
-            $newSyncJob = SyncJob::create(['type' => 'stock-export']);
-            SyncJob::where('id' ,'<>' ,$newSyncJob->id)->where('type' ,$newSyncJob->jobType)->delete();
-            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
-        }
+        SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
+
+        SyncJob::truncate();
+
+//        # check if there is product sync job
+//        $activeJob = SyncJob::activeStatus('stock-export')->first();
+//
+//        if (!$activeJob) {
+//            $newSyncJob = SyncJob::create(['type' => 'stock-export']);
+//            SyncJob::where('id' ,'<>' ,$newSyncJob->id)->where('type' ,$newSyncJob->jobType)->delete();
+//            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
+//        }
 
         session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
 

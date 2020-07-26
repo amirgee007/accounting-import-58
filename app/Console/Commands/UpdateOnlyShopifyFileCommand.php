@@ -69,8 +69,6 @@ class UpdateOnlyShopifyFileCommand extends Command
 
             Log::alert(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!working');
 
-            SyncJob::truncate();
-
         }
         else {
             Log::warning('Already running job so its skipped NOW...!');
@@ -155,16 +153,18 @@ class UpdateOnlyShopifyFileCommand extends Command
 
             Excel::store(new ShopifyImportFileExport($allDataArrSHopify), $pathShopify);
 
-            Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
-
-            SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
-
             Log::alert('createFileShopify Created successfully....!');
 
         } catch (\Exception $ex) {
             Log::error(' JOB FAILED createShopifyFile. '.$ex->getMessage() . $ex->getLine());
             SyncJob::where('type', 'stock-export')->update(['status' => 'failed']);
         }
+
+        Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
+
+        SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
+
+        SyncJob::truncate();
 
     }
 
