@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\AlreadyExistProduct;
+use App\Models\ShopifySizeColor;
 use Illuminate\Console\Command;
 use App\Models\SyncJob;
 use Illuminate\Support\Facades\Log;
@@ -65,7 +66,7 @@ class UpdateOnlyShopifyFileCommand extends Command
 
             Log::alert(now()->toDateTimeString() . ' started updated JOB now for all the things...!working');
 
-            $this->createStockShopifyOutPutExcelFile();
+            //$this->createStockShopifyOutPutExcelFile();
 
             Log::alert(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!working');
 
@@ -223,7 +224,7 @@ class UpdateOnlyShopifyFileCommand extends Command
                 $lastChar = substr($iCellCategory, -1);
                 $categoryWithoutGender =  substr_replace(trim($iCellCategory) ,"",-2);
 
-                $gender = ($lastChar == 'M') ? ' Masculino' : ' Feminino';
+                $gender = ($lastChar == 'M') ? ' Masculino' : ' Femenino';
                 $iCellCategory =  substr_replace(trim($iCellCategory) ,$gender,-2);
             }
 
@@ -237,7 +238,7 @@ class UpdateOnlyShopifyFileCommand extends Command
             }
 
             if (strpos($fatherCategory, ' F ') !== false)
-                $fatherCategory =  str_replace(" F "," Feminino ",$fatherCategory);
+                $fatherCategory =  str_replace(" F "," Femenino ",$fatherCategory);
 
             elseif(strpos($fatherCategory, ' M ') !== false)
                 $fatherCategory =  str_replace(" M "," Masculino ",$fatherCategory);
@@ -245,7 +246,7 @@ class UpdateOnlyShopifyFileCommand extends Command
 
 
             if (strpos($titleCell, ' F ') !== false)
-                $titleCell =  str_replace(" F "," Feminino ",$titleCell);
+                $titleCell =  str_replace(" F "," Femenino ",$titleCell);
 
             elseif(strpos($titleCell, ' M ') !== false)
                 $titleCell =  str_replace(" M "," Masculino ",$titleCell);
@@ -264,12 +265,21 @@ class UpdateOnlyShopifyFileCommand extends Command
             $fatherCategoryTag = $fatherCategory ? (','.$fatherCategory) : '';
             $tagsCell = $categoryWithoutGender . $fatherCategoryTag . $brandForTags .$newTagsPersonalizado. $edadDatePatternColumn;
 
+
+            $vendor = $sColumnBrandLen > 2 ? $pCellBrand : 'ND';
+
+            $older = ["SN", "sin marca", "ND", "Amigui", "amigui"];
+            $replace = "Sin marca";
+            $newer   = [$replace ,$replace, $replace, $replace, $replace];
+
+            $vendorColumn = str_replace($older, $newer, $vendor);
+
             return [
 
                 'Handle' => $singleRow['codigo'], #done
                 'Title' => $titleCell,
                 'Body' => $titleCell,
-                'Vendor' => $sColumnBrandLen > 2 ? $pCellBrand : 'ND', #done
+                'Vendor' => $vendorColumn,
                 'Type' => $fatherCategory,
                 'Tags' => rtrim($tagsCell,','),
 

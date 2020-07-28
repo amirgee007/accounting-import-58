@@ -26,7 +26,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'updateStockFiles:run';
+    protected $signature = 'updateStockShopifyFiles:run';
 
     /**
      * The console command description.
@@ -68,11 +68,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
         if (!$activeJob) {
 
-            Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!working');
+            Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New');
 
             $this->createStockShopifyOutPutExcelFile();
 
-            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!working');
+            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New');
 
             SyncJob::truncate();
 

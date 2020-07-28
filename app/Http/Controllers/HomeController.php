@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Console\Commands\UpdateOnlyShopifyFileCommand;
+use App\Console\Commands\UpdateStockAndShopifyFIlesCommand;
 use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
 use App\Models\Setting;
 use App\Models\SyncJob;
@@ -74,7 +75,7 @@ class HomeController extends Controller
 
     public function syncJobToUpdateFiles(){
 
-        $jb = new UpdateOnlyShopifyFileCommand();
+        $jb = new UpdateStockAndShopifyFIlesCommand();
         $jb->createStockShopifyOutPutExcelFile();
 
         Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);

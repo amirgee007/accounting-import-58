@@ -49,7 +49,7 @@ class UpdateOnlyStockFileCommand extends Command
 
             Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!working');
 
-            $this->createStockExcelFile();
+            //$this->createStockExcelFile();
 
             Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!working');
         }
