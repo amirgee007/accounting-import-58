@@ -126,11 +126,6 @@ class UpdateOnlyShopifyFileCommand extends Command
 
                     foreach ($data as $row){
 
-                        $response = $this->getStockFileRow($row);
-
-                        if($response)
-                            $allDataArrStock[] = $response;
-
                         $matching = ltrim(trim($row['codigo'])  ,'0');
                         $existingProduct = AlreadyExistProduct::where('codigo' ,'like',"%$matching%")->count();
 
