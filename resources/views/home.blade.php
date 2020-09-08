@@ -44,23 +44,23 @@
                         <br>
                         <hr>
                         <br>
-                        <form method="GET" action="{{route('home')}}">
+                        {{--<form method="GET" action="{{route('home')}}">--}}
 
-                            <div class="form-group row">
-                                <label for="name" class="col-md-4 col-form-label text-md-right">LOAD any SKU images if needed</label>
+                            {{--<div class="form-group row">--}}
+                                {{--<label for="name" class="col-md-4 col-form-label text-md-right">LOAD any SKU images if needed</label>--}}
 
-                                <div class="col-md-5">
-                                    <input type="number" value="{{request('is_sku')}}" class="form-control" name="is_sku" required>
-                                </div>
+                                {{--<div class="col-md-5">--}}
+                                    {{--<input type="number" value="{{request('is_sku')}}" class="form-control" name="is_sku" required>--}}
+                                {{--</div>--}}
 
-                                <div class="col-md-3">
+                                {{--<div class="col-md-3">--}}
                                     {{--<button type="submit" class="btn btn-primary float-right">--}}
                                         {{--Load Images--}}
                                     {{--</button>--}}
-                                </div>
+                                {{--</div>--}}
 
-                            </div>
-                        </form>
+                            {{--</div>--}}
+                        {{--</form>--}}
 
                         @if(request('is_sku'))
                         <br>
