@@ -31,11 +31,11 @@
                                 </a>
 
                                 <a href="{{route('create.stock.files')}}" class="btn btn-danger">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i> Click to update now
+                                    <i class="fa fa-refresh" aria-hidden="true"></i> Click to update
                                 </a>
 
                                 <a href="{{route('create.shopify.import.excel')}}" class="btn btn-success">
-                                    <i class="fa fa-download" aria-hidden="true"></i> Download Shopify Excel File
+                                    <i class="fa fa-download" aria-hidden="true"></i> Download Shopify XLS File
                                 </a>
 
                             </div>
