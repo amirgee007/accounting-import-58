@@ -22,10 +22,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::post('/tax-update', [
-        'as' => 'tax.update',
-        'uses' => 'HomeController@updateTax'
-    ]);
+
+    Route::post('/ajaxProdImageUpload', 'HomeController@ajaxProdImageUpload')->name('add_img');
+    Route::post('/ajaxProdImageDelete', 'HomeController@ajaxProdImageDelete')->name('remove_img');
+
 
     Route::get('/download-stock-excel', [
         'as' => 'create.stock.excel',

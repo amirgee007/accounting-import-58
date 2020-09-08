@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- release v4.4.9, copyright 2014 - 2018 Kartik Visweswaran -->
+<!--suppress JSUnresolvedLibraryURL -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Krajee JQuery Plugins - &copy; Kartik</title>
+    
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="themes/explorer-fa/theme.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="js/fileinput.js" type="text/javascript"></script>
+    <script src="themes/explorer-fa/theme.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="container kv-main">
+
+    <form enctype="multipart/form-data">
+        <div class="file-loading">
+            <input id="kv-explorer" type="file" multiple>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="reset" class="btn btn-default">Reset</button>
+    </form>
+    <br>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+        $("#kv-explorer").fileinput({
+            'theme': 'explorer-fa',
+            'uploadUrl': '#',
+            overwriteInitial: false,
+            initialPreviewAsData: true,
+            initialPreview: [
+            ],
+            initialPreviewConfig: [
+                {caption: "nature-1.jpg", size: 329892, width: "120px", url: "{$url}", key: 1}
+            ]
+        });
+    });
+</script>
+</html>
