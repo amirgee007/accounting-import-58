@@ -6,10 +6,6 @@
     <link href="{{asset('assets/plugins/bootstrap-fileinput/css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" crossorigin="anonymous">
-
-
-    <link rel="stylesheet" type="text/css" href="{{asset('dropzone/dist/min/dropzone.min.css')}}">
-
 @stop
 
 @section('content')
@@ -22,7 +18,9 @@
 
                     <div class="card-body">
 
-                        <form action="{{route('add_img')}}" class='dropzone' ></form>
+                        <div class="file-loading">
+                            <input id="prod-images" name="images[]" type="file" accept="image/*" multiple>
+                        </div>
 
                         <hr>
 
@@ -98,19 +96,54 @@
 
     @include('partials.toaster-js')
 
-    <script src="{{asset('dropzone/dist/min/dropzone.min.js')}}" type="text/javascript"></script>
 
+    <script src="{{asset('assets/plugins/bootstrap-fileinput/js/fileinput.js')}}" type="text/javascript"></script>
 
     <script>
-        var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        var $el1 = $("#prod-images");
 
-        Dropzone.autoDiscover = false;
-        var myDropzone = new Dropzone(".dropzone",{
-            maxFilesize: 3,  // 3 mb
-            acceptedFiles: ".jpeg,.jpg,.png,.pdf",
+        $el1.fileinput({
+
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            allowedFileExtensions: ["png", "jpg", "gif", "jpeg", "bmp", "tiff"],
+            uploadAsync: false,
+            showUpload: false,
+            showDownload: true,
+            showRemove: false,
+            overwriteInitial: false,
+            minFileCount: 1,
+            maxFileCount: 50,
+            initialPreviewAsData: true,
+            initialPreviewFileType: 'image',
+            initialPreview: [],
+            initialPreviewConfig: [],
+            uploadUrl: "/ajaxProdImageUpload",
+
+            uploadExtraData: function() {
+                return {
+                    _token:"{{csrf_token()}}"
+                };
+            },
+
+            deleteExtraData: function() {
+                return {
+                    _token:"{{csrf_token()}}"
+                };
+            },
+
+            deleteUrl: "/ajaxProdImageDelete"
+
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        }).on('filedeleteerror', function(event, data, msg) {
+            console.log(msg,data);
+            toastr.error("Something went wrong please contact admin .", "Error");
+        }).on('filedeleted', function(event, key, jqXHR, data) {
+            toastr.success("File successfully removed.", "Success");
         });
-        myDropzone.on("sending", function(file, xhr, formData) {
-            formData.append("_token", CSRF_TOKEN);
-        });
+
     </script>
 @stop

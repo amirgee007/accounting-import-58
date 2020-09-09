@@ -64,11 +64,44 @@ class HomeController extends Controller
 
     public function ajaxProdImageUpload(Request $request){
 
+        if($request->hasFile('file')) {
+
+            // Upload path
+            $destinationPath = 'files/';
+
+            // Create directory if not exists
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            // Get file extension
+            $extension = $request->file('file')->getClientOriginalExtension();
+
+            // Valid extensions
+            $validextensions = array("jpeg","jpg","png","pdf");
+
+            // Check extension
+            if(in_array(strtolower($extension), $validextensions)){
+
+                // Rename file
+                $fileName = $request->file('file')->getClientOriginalName().time() .'.' . $extension;
+                // Uploading file to given path
+                $request->file('file')->move($destinationPath, $fileName);
+
+            }
+
+        }
+    }
+
+    public function ajaxProdImageUploadOLD(Request $request){
+
         try {
 
             $preview = $config = $errors = [];
 
             $input = $request->images;
+
+            Log::warning(count($input));
 
             if (empty($input))
                 $output = [];
