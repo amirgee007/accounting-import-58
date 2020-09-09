@@ -66,27 +66,59 @@ class HomeController extends Controller
 
         if($request->hasFile('file')) {
 
-            // Upload path
-            $destinationPath = 'files/';
+            $imgUpload = $request->file('file');
 
-            // Create directory if not exists
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
+             {
 
-            // Get file extension
-            $extension = $request->file('file')->getClientOriginalExtension();
+                $filename = $imgUpload->getClientOriginalName();
+                $extension = $imgUpload->getClientOriginalExtension();
 
-            // Valid extensions
-            $validextensions = array("jpeg","jpg","png","pdf");
+                 // Valid extensions
+                 $validextensions = array("jpeg","jpg","png","JPG" ,'JPEG');
 
-            // Check extension
-            if(in_array(strtolower($extension), $validextensions)){
+                 // Check extension
+                 if(in_array(strtolower($extension), $validextensions)){
+                     try{
 
-                // Rename file
-                $fileName = $request->file('file')->getClientOriginalName().time() .'.' . $extension;
-                // Uploading file to given path
-                $request->file('file')->move($destinationPath, $fileName);
+                         $withoutExtension = pathinfo($filename, PATHINFO_FILENAME);
+
+                         $names = (explode('-' ,$withoutExtension));
+
+                         if(isset($names[1]) && is_numeric($names[1])){
+                             $filenameWithExt = $names[1] . '.' . $extension;
+                             $folder = $names[0];
+                         }
+                         else
+                         {
+                             $filenameWithExt = 1 . '.' . $extension;
+                             $folder = $names[0];
+                         }
+
+                         $filenamePath = ('public/shopify-images/'.$folder .'/'.$filenameWithExt);
+
+                         \Storage::disk('local')->put($filenamePath, file_get_contents(
+                                 $imgUpload->getRealPath())
+                         );
+
+                         $newFileUrl = url(str_replace("public","storage",$filenamePath));
+
+                         $preview[] = $newFileUrl;
+
+                         $config[] = [
+                             'key' => $filenameWithExt,
+                             'extra' => ['_token' => rand()],
+                             'caption' => $folder.'/'.$filenameWithExt,
+                             'size' => $fileSize,
+                             'downloadUrl' => $newFileUrl, // the url to download the file
+                             'url' => route('remove_img'), // server api to delete the file based on key
+                         ];
+
+                     }catch (\Exception $ex){
+
+                         Log::warning($filename. ' image name is INVALID here,  please try again with correct name-int.extension');
+                     }
+
+                 }
 
             }
 
@@ -98,10 +130,6 @@ class HomeController extends Controller
         try {
 
             $preview = $config = $errors = [];
-
-            $input = $request->images;
-
-            Log::warning(count($input));
 
             if (empty($input))
                 $output = [];

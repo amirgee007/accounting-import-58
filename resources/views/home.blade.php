@@ -106,8 +106,8 @@
 
         Dropzone.autoDiscover = false;
         var myDropzone = new Dropzone(".dropzone",{
-            maxFilesize: 3,  // 3 mb
-            acceptedFiles: ".jpeg,.jpg,.png,.pdf",
+            maxFilesize: 1,  // 3 mb
+            acceptedFiles: ".jpeg,.jpg,.png,.JPG,.JPEG",
         });
         myDropzone.on("sending", function(file, xhr, formData) {
             formData.append("_token", CSRF_TOKEN);
