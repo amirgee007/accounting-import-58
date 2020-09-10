@@ -8,9 +8,12 @@ use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
 use App\Models\Setting;
 use App\Models\SyncJob;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 
 class HomeController extends Controller
@@ -43,15 +46,23 @@ class HomeController extends Controller
 
         if(\request('is_sku')){
 
-//            $folder = request('is_sku');
-//            $filenamePath = ('public/sello-images/'.$folder);
-//
-//            $files = Storage::files($filenamePath);
-//
-//            return view('dashboard.admin' ,compact('files'));
+            $folder = request('is_sku');
+            $filenamePath = ('public/shopify-images/'.$folder);
+
+            $files = Storage::files($filenamePath);
         }
 
         return view('home' ,compact('setting' ,'lastUpdate' ,'files'));
+    }
+
+    public function resetAllImages(){
+
+        $file = new Filesystem;
+        $file->cleanDirectory('storage/shopify-images');
+
+        session()->flash('app_message', 'Your all images in the PROJECT are removed please upload again.');
+
+        return back();
     }
 
     public function updateTax(Request $request){
