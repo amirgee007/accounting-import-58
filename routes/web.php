@@ -27,6 +27,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/ajaxProdImageUpload', 'HomeController@ajaxProdImageUpload')->name('add_img');
     Route::post('/ajaxProdImageDelete', 'HomeController@ajaxProdImageDelete')->name('remove_img');
 
+    Route::get('/reset-all-images', [
+        'as' => 'reset.all.images',
+        'uses' => 'HomeController@resetAllImages'
+    ]);
 
     Route::get('/download-stock-excel', [
         'as' => 'create.stock.excel',

@@ -142,8 +142,13 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         $matching = ltrim(trim($row['codigo'])  ,'0');
                         $existingProduct = AlreadyExistProduct::where('codigo' ,'like',"%$matching%")->count();
 
+                        $filenamePath = ('public/shopify-images/'.trim($row['codigo']));
+                        $imagesExistArray = Storage::files($filenamePath);
+
+                        if(count($imagesExistArray) == 0) continue;
+
                         if($existingProduct == 0) {
-                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray);
+                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray);
 
                             if($response)
                                 $allDataArrSHopify[] = $response;
@@ -184,6 +189,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $priceWithTax = $singleRow['pvp1'] + (($taxPercentage / 100) * $singleRow['pvp1']);
 
             return [
+
                 'Handle' => $singleRow['codigo_barra'],
                 'Variant Price' => round($priceWithTax, 2),
                 'Variant Taxable' => false, #not using it
@@ -197,7 +203,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     }
 
-    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere)
+    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere ,$images)
     {
 
         try {
@@ -263,7 +269,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $titleCell = ($iCellCategory . ($sColumnBrandLen > 2 ? (' '.$pCellBrand) : ''));
 
-
             #remove single char from the TYPE too
             $checkLastChar = substr(trim($fatherCategory), -2, 1);
             if (ctype_space($checkLastChar)) {
@@ -275,7 +280,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             elseif(strpos($fatherCategory, ' M ') !== false)
                 $fatherCategory =  str_replace(" M "," Masculino ",$fatherCategory);
-
 
 
             if (strpos($titleCell, ' F ') !== false)
@@ -306,6 +310,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $vendorColumn = str_replace($older, $newer, $vendor);
 
+            $images = array_map(function ($value) {
+                return url(str_replace("public", "storage", $value));
+            },
+                $images);
+
             return [
 
                 'Handle' => $singleRow['codigo'], #done
@@ -327,7 +336,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 'V_Inventory_Policy' => 'deny',
                 'V_Price' => round($priceWithTax, 4),
                 'V_Requires_Shipping' => true,
-                'V_Taxable' => true
+                'V_Taxable' => true,
+                'imagen Calc' => implode(';',$images)
             ];
 
 
