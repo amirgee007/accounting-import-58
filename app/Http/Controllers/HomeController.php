@@ -48,7 +48,6 @@ class HomeController extends Controller
 
             $folder = request('is_sku');
             $filenamePath = ('public/shopify-images/'.$folder);
-
             $files = Storage::files($filenamePath);
         }
 

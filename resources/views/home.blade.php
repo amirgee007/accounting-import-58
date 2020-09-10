@@ -78,7 +78,12 @@
                                         @foreach ($files as $index => $file)
                                         <div class="col-sm">
                                             <img width="200" src="{{url(str_replace('public' ,'storage' ,$file))}}" alt="..." class="img-thumbnail">
+
+                                            <a target="_blank" href="{{url(str_replace('public' ,'storage' ,$file))}}"><small>View In BROWSER</small></a>
+
+                                            <br>
                                         </div>
+
                                         @endforeach
                                     @else
                                         <h5 class="ml-4 text-danger">Sorry No image found for this SKU please upload again or contact admin.</h5>
