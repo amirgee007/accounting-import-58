@@ -130,8 +130,13 @@ class UpdateOnlyShopifyFileCommand extends Command
                         $matching = ltrim(trim($row['codigo'])  ,'0');
                         $existingProduct = AlreadyExistProduct::where('codigo' ,'like',"%$matching%")->count();
 
+                        $filenamePath = ('public/shopify-images/'.trim($row['codigo']));
+                        $imagesExistArray = Storage::files($filenamePath);
+
+                        if(count($imagesExistArray) == 0) continue;
+
                         if($existingProduct == 0) {
-                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray);
+                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray , $imagesExistArray);
 
                             if($response)
                                 $allDataArrSHopify[] = $response;
@@ -164,7 +169,7 @@ class UpdateOnlyShopifyFileCommand extends Command
 
     }
 
-    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere)
+    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere ,$images)
     {
 
         try {
@@ -274,6 +279,11 @@ class UpdateOnlyShopifyFileCommand extends Command
 
             $vendorColumn = str_replace($older, $newer, $vendor);
 
+            $images = array_map(function ($value) {
+                return url(str_replace("public", "storage", $value));
+            },
+                $images);
+
             return [
 
                 'Handle' => $singleRow['codigo'], #done
@@ -295,7 +305,8 @@ class UpdateOnlyShopifyFileCommand extends Command
                 'V_Inventory_Policy' => 'deny',
                 'V_Price' => round($priceWithTax, 4),
                 'V_Requires_Shipping' => true,
-                'V_Taxable' => true
+                'V_Taxable' => true,
+                'imagen Calc' => implode(';',$images)
             ];
 
 
