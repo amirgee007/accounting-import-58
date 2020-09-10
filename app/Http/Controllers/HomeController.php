@@ -278,6 +278,8 @@ class HomeController extends Controller
 
     public function syncJobToUpdateFiles(){
 
+        ini_set('max_execution_time', 3600); //900 seconds = 30 minutes
+
         $jb = new UpdateStockAndShopifyFIlesCommand();
         $jb->createStockShopifyOutPutExcelFile();
 
