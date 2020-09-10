@@ -74,6 +74,8 @@ class HomeController extends Controller
 
     public function ajaxProdImageUpload(Request $request){
 
+        ini_set('max_execution_time', 1800); //900 seconds = 30 minutes
+
         if($request->hasFile('file')) {
 
             $imgUpload = $request->file('file');
