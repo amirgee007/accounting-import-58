@@ -41,7 +41,7 @@
                                 </a>
 
                                 <a href="{{route('create.stock.files')}}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i> Click to REFRESH
+                                    <i class="fa fa-refresh" aria-hidden="true"></i> Process images
                                 </a>
 
                             </div>
