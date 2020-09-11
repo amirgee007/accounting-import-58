@@ -226,7 +226,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $iCellCategory = $categoryWithoutGender = $subCategory;
             $hCell = self::getCat2Data($subCategory);
 
-
             $brand = str_replace('#', '', $brand);
 
             $checkLastCharB = $brand ? substr(trim($brand), -2, 1) : '';

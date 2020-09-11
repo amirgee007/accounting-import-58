@@ -34,9 +34,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
-    Route::get('/run-sync-stock-excel-files', [
-        'as' => 'create.stock.files',
-        'uses' => 'HomeController@syncJobToUpdateFiles'
+    Route::get('/process-images-into-shopify', [
+        'as' => 'process.images.files.excel',
+        'uses' => 'HomeController@processImagesIntoExcelFile'
     ]);
 
     Route::get('/download-shopify-import-file', [

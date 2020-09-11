@@ -10,6 +10,14 @@
 
     <link rel="stylesheet" type="text/css" href="{{asset('dropzone/dist/min/dropzone.min.css')}}">
 
+    <style>
+        .containerCustom {
+            font-size: 70px;
+            display: flex;
+            justify-content: center;
+            color: firebrick;
+        }
+    </style>
 @stop
 
 @section('content')
@@ -40,16 +48,18 @@
                                     <i class="fa fa-download" aria-hidden="true"></i> Download Shopify XLS File
                                 </a>
 
-                                <a href="{{route('create.stock.files')}}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i> Process images into EXCEL
+                                <a id="mybutton" href="{{route('process.images.files.excel')}}" class="btn btn-sm btn-danger processImages">
+                                    <span id="imageLoader"><i class="fa fa-refresh" aria-hidden="true"></i></span> Process images into EXCEL
                                 </a>
 
                             </div>
+
+                            <div class="col-md-12">
+                                <div class="containerCustom" id="timerDiv"></div>
+                            </div>
                         </div>
 
-                        <br>
-                        <hr>
-                        <br>
+                        <br> <hr> <br>
                         <form method="GET" action="{{route('home')}}">
 
                             <div class="form-group row">
@@ -69,30 +79,27 @@
                         </form>
 
                         @if(request('is_sku'))
-                        <br>
-                        <div class="form-group row mb-0">
+                            <br>
+                            <div class="form-group row mb-0">
+                                <div class="container">
+                                    <div class="row">
+                                        @if (count($files))
+                                            @foreach ($files as $index => $file)
+                                            <div class="col-sm">
+                                                <img width="200" src="{{url(str_replace('public' ,'storage' ,$file))}}" alt="..." class="img-thumbnail">
 
-                            <div class="container">
-                                <div class="row">
-                                    @if (count($files))
-                                        @foreach ($files as $index => $file)
-                                        <div class="col-sm">
-                                            <img width="200" src="{{url(str_replace('public' ,'storage' ,$file))}}" alt="..." class="img-thumbnail">
+                                                <a target="_blank" href="{{url(str_replace('public' ,'storage' ,$file))}}"><small>View In BROWSER</small></a>
 
-                                            <a target="_blank" href="{{url(str_replace('public' ,'storage' ,$file))}}"><small>View In BROWSER</small></a>
+                                                <br>
+                                            </div>
 
-                                            <br>
-                                        </div>
-
-                                        @endforeach
-                                    @else
-                                        <h5 class="ml-4 text-danger">Sorry No image found for this SKU please upload again or contact admin.</h5>
-                                    @endif
+                                            @endforeach
+                                        @else
+                                            <h5 class="ml-4 text-danger">Sorry No image found for this SKU please upload again or contact admin.</h5>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-
-                        </div>
-
                         @endif
                     </div>
                 </div>
@@ -118,5 +125,29 @@
         myDropzone.on("sending", function(file, xhr, formData) {
             formData.append("_token", CSRF_TOKEN);
         });
+
+
+        var timer = null;
+        var time = 0;
+        $('#mybutton').click(function() {
+            time = 900;
+            showTimer();
+            timer = setInterval(showTimer, 1000);
+        });
+
+        function showTimer() {
+            if (time < 0) {
+                clearInterval(timer);
+                return;
+            }
+            function pad(value) {
+                return (value < 10 ? '0' : '') + value;
+            }
+            $('#timerDiv').text(Math.floor(time / 60) + ':' + pad(time % 60));
+            $('#imageLoader').html('<i class="fa fa-refresh fa-spin" aria-hidden="true"></i>');
+
+            time--;
+        }
+
     </script>
 @stop

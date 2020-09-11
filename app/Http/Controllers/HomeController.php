@@ -114,87 +114,9 @@ class HomeController extends Controller
         }
     }
 
-    public function ajaxProdImageUploadOLD(Request $request){
-
-        try {
-
-            $preview = $config = $errors = [];
-
-            if (empty($input))
-                $output = [];
-            else {
-
-                foreach ($request->images as $index => $imgUpload) {
-
-                    $filename = $imgUpload->getClientOriginalName();
-                    $extension = $imgUpload->getClientOriginalExtension();
-                    $fileSize = $imgUpload->getClientSize(); // getting original fileName;
-
-                    try{
-
-                        $withoutExtension = pathinfo($filename, PATHINFO_FILENAME);
-
-                        $names = (explode('-' ,$withoutExtension));
-
-                        if(isset($names[1]) && is_numeric($names[1])){
-                            $filenameWithExt = $names[1] . '.' . $extension;
-                            $folder = $names[0];
-                        }
-                        else
-                        {
-                            $filenameWithExt = 1 . '.' . $extension;
-                            $folder = $names[0];
-                        }
-
-                        $filenamePath = ('public/shopify-images/'.$folder .'/'.$filenameWithExt);
-
-                        \Storage::disk('local')->put($filenamePath, file_get_contents(
-                                $imgUpload->getRealPath())
-                        );
-
-                        $newFileUrl = url(str_replace("public","storage",$filenamePath));
-
-                        $preview[] = $newFileUrl;
-
-                        $config[] = [
-                            'key' => $filenameWithExt,
-                            'extra' => ['_token' => rand()],
-                            'caption' => $folder.'/'.$filenameWithExt,
-                            'size' => $fileSize,
-                            'downloadUrl' => $newFileUrl, // the url to download the file
-                            'url' => route('remove_img'), // server api to delete the file based on key
-                        ];
-
-                    }catch (\Exception $ex){
-
-                        Log::warning($filename. ' image name is INVALID here,  please try again with correct name-int.extension');
-                    }
-
-                }
-
-                $output = [
-                    'initialPreview' => $preview,
-                    'initialPreviewConfig' => $config,
-                    'initialPreviewAsData' => true,
-                ];
-            }
-
-            echo json_encode($output);
-
-        } catch (\Exception $e) {
-            Log::error('Error during image upload ' . $e->getMessage() . ' amir user id ' . auth()->id());
-
-            $output = [
-                'error' => 'No files selected to upload.'
-            ];
-            echo json_encode($output);
-        }
-    }
-
     public function downloadStockExcelFIle(){
         try{
             $path = storage_path('app/temp/PVP-2.xlsx');
-
             return response()->download($path);
         }
         catch (\Exception $ex){
@@ -209,7 +131,6 @@ class HomeController extends Controller
 
         try{
             $path = storage_path('app/temp/Shopify-OUTPUT-FILE-Ready-to-Import.xlsx');
-
             return response()->download($path);
         }
         catch (\Exception $ex){
@@ -219,7 +140,7 @@ class HomeController extends Controller
         }
     }
 
-    public function syncJobToUpdateFiles(){
+    public function processImagesIntoExcelFile(){
 
         ini_set('max_execution_time', 3600); //900 seconds = 30 minutes
 
