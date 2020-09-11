@@ -19,6 +19,7 @@
         <th>Variant Price</th>
         <th>Variant Requires Shipping</th>
         <th>Variant Taxable</th>
+        <th>imagen Calc</th>
     </tr>
     </thead>
     <tbody>
@@ -45,6 +46,7 @@
             <td>{{$product['V_Price']}}</td>
             <td>{{$product['V_Requires_Shipping'] ? 'TRUE' : 'FALSE'}}</td>
             <td>{{$product['V_Taxable'] ? 'TRUE' : 'FALSE'}}</td>
+            <td>{{$product['imagen_Calc']}}</td>
         </tr>
     @endforeach
 

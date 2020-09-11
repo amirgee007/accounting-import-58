@@ -337,7 +337,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 'V_Price' => round($priceWithTax, 4),
                 'V_Requires_Shipping' => true,
                 'V_Taxable' => true,
-                'imagen Calc' => implode(';',$images)
+                'imagen_Calc' => implode(';',$images)
             ];
 
 
