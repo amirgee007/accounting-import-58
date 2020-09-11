@@ -32,16 +32,16 @@
                                     <i class="fa fa-download" aria-hidden="true"></i> Reset All Images
                                 </a>
 
-                                <a type="" href="{{route('create.stock.excel')}}" class="btn-sm btn btn-success">
+                                <a type="" href="{{route('download.stock.excel')}}" class="btn-sm btn btn-success">
                                     <i class="fa fa-download" aria-hidden="true"></i> Download Stock File
                                 </a>
 
-                                <a href="{{route('create.shopify.import.excel')}}" class="btn btn-sm btn-success">
+                                <a href="{{route('download.shopify.import.excel')}}" class="btn btn-sm btn-success">
                                     <i class="fa fa-download" aria-hidden="true"></i> Download Shopify XLS File
                                 </a>
 
                                 <a href="{{route('create.stock.files')}}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i> Process images
+                                    <i class="fa fa-refresh" aria-hidden="true"></i> Process images into EXCEL
                                 </a>
 
                             </div>

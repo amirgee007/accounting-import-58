@@ -74,66 +74,43 @@ class HomeController extends Controller
 
     public function ajaxProdImageUpload(Request $request){
 
-        ini_set('max_execution_time', 1800); //900 seconds = 30 minutes
+        ini_set('max_execution_time', 1800);
 
-        if($request->hasFile('file')) {
+        if ($request->hasFile('file')) {
 
-            $imgUpload = $request->file('file');
-
-             {
+            $imgUpload = $request->file('file');{
 
                 $filename = $imgUpload->getClientOriginalName();
                 $extension = $imgUpload->getClientOriginalExtension();
 
-                 // Valid extensions
-                 $validextensions = array("jpeg","jpg","png","JPG" ,'JPEG');
+                $validextensions = array("jpeg", "jpg", "png");
 
-                 // Check extension
-                 if(in_array(strtolower($extension), $validextensions)){
-                     try{
+                // Check extension
+                if (in_array(strtolower($extension), $validextensions)) {
+                    try {
 
-                         $withoutExtension = pathinfo($filename, PATHINFO_FILENAME);
+                        $withoutExtension = pathinfo($filename, PATHINFO_FILENAME);
 
-                         $names = (explode('-' ,$withoutExtension));
+                        $names = (explode('-', $withoutExtension));
 
-                         if(isset($names[1]) && is_numeric($names[1])){
-                             $filenameWithExt = $names[1] . '.' . $extension;
-                             $folder = $names[0];
-                         }
-                         else
-                         {
-                             $filenameWithExt = 1 . '.' . $extension;
-                             $folder = $names[0];
-                         }
+                        if (isset($names[1]) && is_numeric($names[1])) {
+                            $filenameWithExt = $names[1] . '.' . $extension;
+                            $folder = $names[0];
+                        } else {
+                            $filenameWithExt = 1 . '.' . $extension;
+                            $folder = $names[0];
+                        }
 
-                         $filenamePath = ('public/shopify-images/'.$folder .'/'.$filenameWithExt);
+                        $filenamePath = ('public/shopify-images/' . $folder . '/' . $filenameWithExt);
 
-                         \Storage::disk('local')->put($filenamePath, file_get_contents(
-                                 $imgUpload->getRealPath())
-                         );
+                        \Storage::disk('local')->put($filenamePath, file_get_contents($imgUpload->getRealPath()));
 
-                         $newFileUrl = url(str_replace("public","storage",$filenamePath));
+                    } catch (\Exception $ex) {
+                        Log::warning($filename . ' error ' . $ex->getMessage());
+                    }
 
-                         $preview[] = $newFileUrl;
-
-                         $config[] = [
-                             'key' => $filenameWithExt,
-                             'extra' => ['_token' => rand()],
-                             'caption' => $folder.'/'.$filenameWithExt,
-                             'size' => $fileSize,
-                             'downloadUrl' => $newFileUrl, // the url to download the file
-                             'url' => route('remove_img'), // server api to delete the file based on key
-                         ];
-
-                     }catch (\Exception $ex){
-
-                         Log::warning($filename. ' image name is INVALID here,  please try again with correct name-int.extension');
-                     }
-
-                 }
-
+                }
             }
-
         }
     }
 
@@ -214,41 +191,7 @@ class HomeController extends Controller
         }
     }
 
-    public function ajaxProdImageDelete(Request $request){
-
-        $key = $request->key;
-
-        $output = [];
-
-        $product_id = $request->product_id;
-
-        try{
-
-            $productImageId = ProductImage::where('product_id' ,$product_id)->where('url_original' ,'like' ,"%{$key}%")->first();
-
-            if($productImageId && env('APP_ENV') == 'production'){
-
-                $original_path = str_replace(env('AWS_BUCKET_URL'), "", $productImageId->url_original); #s3 needs only path not full
-
-                //Storage::disk('s3')->delete($original_path);
-
-                $output = ['info'=>'File successfully unlinked.'];
-            }
-//            else {
-//                throw new \ErrorException('Image not found please contact admin.');
-//            }
-        }
-
-        catch(\Exception $e){
-            throw new \ErrorException(' Image not found please contact admin.' .$product_id.'-'.$key);
-        }
-
-        echo json_encode($output);
-        return;
-    }
-
-    public function createStockExcelFIle(){
-
+    public function downloadStockExcelFIle(){
         try{
             $path = storage_path('app/temp/PVP-2.xlsx');
 
@@ -262,7 +205,7 @@ class HomeController extends Controller
 
     }
 
-    public function createShopifyOutPutExcelFile(){
+    public function downloadShopifyOutPutExcelFile(){
 
         try{
             $path = storage_path('app/temp/Shopify-OUTPUT-FILE-Ready-to-Import.xlsx');
@@ -288,15 +231,6 @@ class HomeController extends Controller
         SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
 
         SyncJob::truncate();
-
-//        # check if there is product sync job
-//        $activeJob = SyncJob::activeStatus('stock-export')->first();
-//
-//        if (!$activeJob) {
-//            $newSyncJob = SyncJob::create(['type' => 'stock-export']);
-//            SyncJob::where('id' ,'<>' ,$newSyncJob->id)->where('type' ,$newSyncJob->jobType)->delete();
-//            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
-//        }
 
         session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
 

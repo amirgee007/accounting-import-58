@@ -16,8 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        UpdateOnlyStockFileCommand::class,
-        UpdateOnlyShopifyFileCommand::class,
+
+        UpdateStockAndShopifyFIlesCommand::class,
     ];
 
     /**

@@ -239,7 +239,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 if (ctype_space($checkLastCharB)) {
                     $pCellBrand = substr_replace(trim($pCellBrand), "", -2);
                 }
-
             }
 
 
@@ -253,7 +252,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             #$priceWithTax = $singleRow['pvp1'] + (($taxPercentage / 100) * $singleRow['pvp1']);
 
             //$titleCellBefore = $iCellCategory .' '. ($tColumnTypeLen<10 ? @$fatherCategory : '') .' '.$hCell.' '.($sColumnBrandLen > 2 ? $pCellBrand : '');
-
 
             #if last char is simple CHAR then remove here
             $checkLastChar = substr(trim($iCellCategory), -2, 1);

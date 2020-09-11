@@ -32,10 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'HomeController@resetAllImages'
     ]);
 
-    Route::get('/download-stock-excel', [
-        'as' => 'create.stock.excel',
-        'uses' => 'HomeController@createStockExcelFIle'
-    ]);
+
 
     Route::get('/run-sync-stock-excel-files', [
         'as' => 'create.stock.files',
@@ -43,9 +40,13 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     Route::get('/download-shopify-import-file', [
-        'as' => 'create.shopify.import.excel',
-        'uses' => 'HomeController@createShopifyOutPutExcelFile'
+        'as' => 'download.shopify.import.excel',
+        'uses' => 'HomeController@downloadShopifyOutPutExcelFile'
     ]);
 
+    Route::get('/download-stock-excel', [
+        'as' => 'download.stock.excel',
+        'uses' => 'HomeController@downloadStockExcelFIle'
+    ]);
 
 });
