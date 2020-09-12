@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('updateStockShopifyFiles:run')
-            ->cron('0 */2 * * *');
+            ->cron('0 */1 * * *');
 
 //        $schedule->command('updateShopifyProductsFile:run')
 //            ->dailyAt('21:00');

@@ -114,8 +114,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $page_count = 1;
 
             $max_pages = (env('APP_ENV') == 'local') ?  5 : 1000;
-
-            Log::info('its ok to have these pages on live' .$max_pages);
+            
             $taxPercentage = $setting->value;
 
             $allDataArrStock  = $allDataArrSHopify = [];

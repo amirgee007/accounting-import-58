@@ -130,7 +130,7 @@
         var timer = null;
         var time = 0;
         $('#mybutton').click(function() {
-            time = 1500;
+            time = 1800;
             showTimer();
             timer = setInterval(showTimer, 1000);
         });
