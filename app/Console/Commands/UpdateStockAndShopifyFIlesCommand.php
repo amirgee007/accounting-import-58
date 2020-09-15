@@ -114,7 +114,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $page_count = 1;
 
             $max_pages = (env('APP_ENV') == 'local') ?  5 : 1000;
-            
+
             $taxPercentage = $setting->value;
 
             $allDataArrStock  = $allDataArrSHopify = [];
@@ -310,6 +310,9 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 return url(str_replace("public", "storage", $value));
             },
                 $images);
+
+            if(!(substr($singleRow['codigo'], 0, 1) === "0"))
+                $singleRow['codigo'] = '0'.$singleRow['codigo'];
 
             return [
 

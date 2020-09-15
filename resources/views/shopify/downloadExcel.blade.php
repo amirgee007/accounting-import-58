@@ -19,7 +19,7 @@
         <th>Variant Price</th>
         <th>Variant Requires Shipping</th>
         <th>Variant Taxable</th>
-        <th>imagen Calc</th>
+        <th>Images</th>
     </tr>
     </thead>
     <tbody>
@@ -32,7 +32,7 @@
             <td>{{$product['Vendor']}}</td>
             <td>{{$product['Type']}}</td>
             <td>{{$product['Tags']}}</td>
-            <td>FALSE</td>
+            <td>TRUE</td>
 
             <td>{{$product['Option1_Name']}}</td>
             <td>{{$product['Option1_Value']}}</td>
