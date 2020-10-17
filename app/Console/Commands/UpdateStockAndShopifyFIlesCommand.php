@@ -89,6 +89,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
         ini_set('memory_limit', '-1');
 
         $setting = Setting::where('key','tax')->first();
+        $settingTags = Setting::where('key','tags')->first();
+        $tags = $settingTags ? ','.$settingTags->value : '';
 
         $categoryArray = $categoryParents = $brandsArray =  [];
 
@@ -147,7 +149,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         if(count($imagesExistArray) == 0) continue;
 
                         if($existingProduct == 0) {
-                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray);
+                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
 
                             if($response)
                                 $allDataArrSHopify[] = $response;
@@ -202,7 +204,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     }
 
-    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere ,$images)
+    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere ,$images ,$tags)
     {
 
         try {
@@ -321,7 +323,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 'Body' => $titleCell,
                 'Vendor' => $vendorColumn,
                 'Type' => $fatherCategory,
-                'Tags' => rtrim($tagsCell,','),
+                'Tags' => rtrim($tagsCell,',') . $tags,
 
                 'Published' => false, #not too important
                 'Option1_Name' => 'Talla',

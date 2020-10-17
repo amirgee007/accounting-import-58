@@ -41,6 +41,8 @@ class HomeController extends Controller
     public function index()
     {
         $setting = Setting::where('key','tax')->first();
+        $tags = Setting::where('key','tags')->first();
+
         $lastUpdate = Setting::where('key','last-change')->first();
         $files = [];
 
@@ -51,7 +53,7 @@ class HomeController extends Controller
             $files = Storage::files($filenamePath);
         }
 
-        return view('home' ,compact('setting' ,'lastUpdate' ,'files'));
+        return view('home' ,compact('setting' ,'lastUpdate' ,'files' ,'tags'));
     }
 
     public function resetAllImages(){
@@ -60,6 +62,14 @@ class HomeController extends Controller
         $file->cleanDirectory('storage/shopify-images');
 
         session()->flash('app_message', 'Your all images in the PROJECT are removed please upload again.');
+
+        return back();
+    }
+
+    public function saveTags(Request $request){
+
+        Setting::updateOrCreate(['key' => 'tags'], ['value' => $request->tags]);
+        session()->flash('app_message', 'Tags has been updated successfully.');
 
         return back();
     }

@@ -59,7 +59,29 @@
                             </div>
                         </div>
 
-                        <br> <hr> <br>
+                        <br> <hr>
+
+                        <form method="post" action="{{route('save.tags')}}">
+
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group row">
+                                <label for="name" class="col-md-4 col-form-label text-md-right">Write Tags Here</label>
+
+                                <div class="col-md-5">
+                                    <input type="text" value="{{@$tags->value}}" class="form-control" placeholder="a, b, c" name="tags" required>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-success btn-sm float-right">
+                                        Save Tags Here
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                        <br>
+                        <hr>
                         <form method="GET" action="{{route('home')}}">
 
                             <div class="form-group row">
@@ -70,8 +92,8 @@
                                 </div>
 
                                 <div class="col-md-3">
-                                    <button type="submit" class="btn btn-primary float-right">
-                                        Load Images
+                                    <button type="submit" class="btn btn-primary btn-sm float-right">
+                                        Load Images Here
                                     </button>
                                 </div>
 
