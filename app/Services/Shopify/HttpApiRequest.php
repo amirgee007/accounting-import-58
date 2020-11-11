@@ -10,7 +10,8 @@ class HttpApiRequest
 
     public static function getContificoApi($type) {
 
-        $uri = "https://amigui.contifico.com/sistema/api/v1"."/".$type;
+        #$uri = "https://amigui.contifico.com/sistema/api/v1"."/".$type;
+        $uri = "https://api.contifico.com/sistema/api/v1"."/".$type;
 
         try {
 
