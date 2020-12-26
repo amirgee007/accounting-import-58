@@ -117,7 +117,7 @@ class HomeController extends Controller
 
                    $namesFinalExcel [] = $newName;
 
-                    File::move($file, $pathNew.'/'.$newName);
+                    #File::move($file, $pathNew.'/'.$newName);
                 }
 
                 $name = 'Rename images files - '. date('Y-m-d') . '.xlsx';
