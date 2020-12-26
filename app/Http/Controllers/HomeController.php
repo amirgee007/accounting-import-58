@@ -39,7 +39,12 @@ class HomeController extends Controller
     }
 
     public function renameFilesSku(Request $request){
+
+
         try {
+
+            ini_set('max_execution_time', 18000);
+
 
             $v = Validator::make($request->all(), [
                 'images_zip' => 'required|mimes:zip',
