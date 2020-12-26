@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Console\Commands\UpdateOnlyShopifyFileCommand;
 use App\Console\Commands\UpdateStockAndShopifyFIlesCommand;
+use App\Exports\ProductSkuRenamedListExport;
+use App\Imports\ProductSkuListImport;
 use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
 use App\Models\Setting;
 use App\Models\SyncJob;
@@ -13,7 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class HomeController extends Controller
@@ -33,6 +38,93 @@ class HomeController extends Controller
         return redirect('/');
     }
 
+    public function renameFilesSku(Request $request){
+        try {
+
+            $v = Validator::make($request->all(), [
+                'images_zip' => 'required|mimes:zip',
+                'sku_file' => 'required|mimes:xlsx',
+            ]);
+
+            if($v->fails()) {
+                return back()->withErrors($v);
+            }
+            else
+            {
+                $sku_file = 'public/backups/sku_file.xlsx';
+
+                Storage::put($sku_file, file_get_contents($request->file('sku_file')->getRealPath()));
+
+                $readd = 'app/'.$sku_file;
+                $products = Excel::toArray(new ProductSkuListImport(), storage_path($readd));
+                $skusFinal = [];
+
+                if(isset($products[0])){
+                    foreach ($products[0] as $product){
+                        $skusFinal[] = $product[0];
+                    }
+                }
+
+                else
+                {
+                    return Redirect::back()->withErrors('Your imported ZIP file is invalid please try again.');
+                }
+
+                $file = new Filesystem;
+                $file->cleanDirectory('files/imageOriginal');
+                $file->cleanDirectory('files/imageRenamed');
+
+                $zip = new \ZipArchive();
+                $file = $request->file('images_zip');
+
+                if ($zip->open($file->path()) === TRUE) {
+                    $zip->extractTo('files/imageOriginal');
+                    $zip->close();
+
+                } else {
+                    Log::error("Order Products Inventories error UNABLE TO READ the zip file.");
+                    return Redirect::back()->withErrors('Your imported ZIP file is invalid please try again.');
+                }
+
+                $path = public_path('files/imageOriginal');
+
+                $files = File::allFiles($path);
+
+
+                $pathNew = public_path('files/imageRenamed');
+                File::makeDirectory($path, $mode = 0777, true, true);
+
+                $skuChoose = $newName = $namesFinalExcel= null;
+
+                $index = 0;
+                foreach ($files as $counter => $file){
+
+                   if($counter%2 == 0){
+                       $skuChoose = @$skusFinal[$index];
+                       $newName = $skuChoose.'.jpg';
+
+                       $index++;
+
+                   }
+                   else{
+                       $newName = $skuChoose.'-2.jpg';
+                   }
+
+                   $namesFinalExcel [] = $newName;
+
+                    File::move($file, $pathNew.'/'.$newName);
+                }
+
+                $name = 'Rename images files - '. date('Y-m-d') . '.xlsx';
+                return Excel::download(new ProductSkuRenamedListExport($namesFinalExcel), $name);
+            }
+
+        } catch (\Exception $ex) {
+
+            Log::error("Order Products Inventories error " .$ex->getMessage().'-'.$ex->getLine());
+            return Redirect::back()->withErrors('Your imported excel file is invalid please try again.');
+        }
+    }
     /**
      * Show the application dashboard.
      *

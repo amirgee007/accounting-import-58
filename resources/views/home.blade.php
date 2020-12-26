@@ -37,7 +37,7 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-12">
                                 <a type="" href="{{route('reset.all.images')}}"  class="btn btn-sm btn-danger">
-                                    <i class="fa fa-download" aria-hidden="true"></i> Reset All Images
+                                    <i class="fa fa-download" aria-hidden="true"></i> Reset All Image
                                 </a>
 
                                 <a type="" href="{{route('download.stock.excel')}}" class="btn-sm btn btn-success">
@@ -45,12 +45,13 @@
                                 </a>
 
                                 <a href="{{route('download.shopify.import.excel')}}" class="btn btn-sm btn-success">
-                                    <i class="fa fa-download" aria-hidden="true"></i> Download Shopify XLS File
+                                    <i class="fa fa-download" aria-hidden="true"></i> Download Shopify File
                                 </a>
 
                                 <a id="mybutton" href="{{route('process.images.files.excel')}}" class="btn btn-sm btn-danger processImages">
-                                    <span id="imageLoader"><i class="fa fa-refresh" aria-hidden="true"></i></span> Process images into EXCEL
+                                    <span id="imageLoader"><i class="fa fa-refresh" aria-hidden="true"></i></span> Process images into XLS
                                 </a>
+
 
                             </div>
 
@@ -59,7 +60,7 @@
                             </div>
                         </div>
 
-                        <br> <hr>
+                        <hr>
 
                         <form method="post" action="{{route('save.tags')}}">
 
@@ -80,7 +81,7 @@
 
                             </div>
                         </form>
-                        <br>
+
                         <hr>
                         <form method="GET" action="{{route('home')}}">
 
@@ -100,7 +101,30 @@
                             </div>
                         </form>
 
-                        @if(request('is_sku'))
+                        <hr>
+                        <form class="form-inline" action="{{route('rename.files.sku')}}" method="POST" enctype="multipart/form-data">
+                            {{csrf_field()}}
+
+                            @if($errors->any())
+                                {!!   implode('', $errors->all('<div class="text-danger">:message</div>')) !!}
+                            @endif
+
+                            <div class="form-group mb-2">
+                                <label for="exampleFormControlFile1">Zip images</label>
+                                <input type="file" required name="images_zip" class="form-control-file" id="zipFiles">
+                            </div>
+
+                            <div class="form-group mb-2">
+                                <label for="exampleFormControlFile1">SKUs XLS</label>
+                                <input type="file" required name="sku_file" class="form-control-file" id="excelSku">
+                            </div>
+
+                            <br>
+                            <input type="submit" value="Rename XLS File" class="btn btn-primary float-right">
+                        </form>
+
+
+                    @if(request('is_sku'))
                             <br>
                             <div class="form-group row mb-0">
                                 <div class="container">
