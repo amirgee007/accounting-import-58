@@ -34,7 +34,10 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'HomeController@resetAllImages'
     ]);
 
-
+    Route::post('/rename-files-sku', [
+        'as' => 'rename.files.sku',
+        'uses' => 'HomeController@renameFilesSku'
+    ]);
 
     Route::get('/process-images-into-shopify', [
         'as' => 'process.images.files.excel',
