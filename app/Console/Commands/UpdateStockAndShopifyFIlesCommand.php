@@ -134,6 +134,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 if(is_array($data) && count($data) > 1) {
 
                     foreach ($data as $row){
+                        
+                        Log::info($row['codigo']);
 
                         $response = $this->getStockFileRow($row);
 
