@@ -135,8 +135,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
                     foreach ($data as $row){
                         
-                        Log::info($row['codigo']);
-
                         $response = $this->getStockFileRow($row);
 
                         if($response)
