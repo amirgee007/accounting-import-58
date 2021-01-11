@@ -151,7 +151,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         if($existingProduct == 0) {
                             $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
 
-                            if($response)
+                            if(is_array($response))
                                 $allDataArrSHopify[] = $response;
                         }
                     }
