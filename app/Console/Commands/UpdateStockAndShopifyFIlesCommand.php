@@ -134,7 +134,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 if(is_array($data) && count($data) > 1) {
 
                     foreach ($data as $row){
-
+                        
                         $response = $this->getStockFileRow($row);
 
                         if($response)
