@@ -236,8 +236,10 @@ class HomeController extends Controller
 
     public function downloadShopifyOutPutExcelFile(){
 
+
         try{
-            $path = storage_path('app/temp/Shopify-OUTPUT-FILE-Ready-to-Import.xlsx');
+            $path = storage_path('app/temp/Shopify-OUTPUT-FILE-Ready-to-Import123.xlsx');
+
             return response()->download($path);
         }
         catch (\Exception $ex){

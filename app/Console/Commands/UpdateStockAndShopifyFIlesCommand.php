@@ -134,7 +134,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 if(is_array($data) && count($data) > 1) {
 
                     foreach ($data as $row){
-                        
+
                         $response = $this->getStockFileRow($row);
 
                         if($response)
@@ -149,10 +149,13 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         if(count($imagesExistArray) == 0) continue;
 
                         if($existingProduct == 0) {
-                            $response = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
+                            $response123 = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
 
-                            if(is_array($response))
-                                $allDataArrSHopify[] = $response;
+                            if(is_array($response123)){
+
+                                Log::warning($row['codigo'] .' Processed and also done and here.');
+                                $allDataArrSHopify[] = $response123;
+                            }
                         }
                     }
                 }
@@ -164,7 +167,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             Storage::deleteDirectory('temp');
 
             $pathStock = 'temp/PVP-2.xlsx';
-            $pathShopify = 'temp/Shopify-OUTPUT-FILE-Ready-to-Import.xlsx';
+            $pathShopify = 'temp/Shopify-OUTPUT-FILE-Ready-to-Import123.xlsx';
 
             Excel::store(new StockFileExport($allDataArrStock), $pathStock);
             Excel::store(new ShopifyImportFileExport($allDataArrSHopify), $pathShopify);
