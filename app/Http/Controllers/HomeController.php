@@ -40,11 +40,9 @@ class HomeController extends Controller
 
     public function renameFilesSku(Request $request){
 
-
         try {
 
             ini_set('max_execution_time', 18000);
-
 
             $v = Validator::make($request->all(), [
                 'images_zip' => 'required|mimes:zip',
@@ -95,9 +93,10 @@ class HomeController extends Controller
 
                 $files = File::allFiles($path);
 
-
                 $pathNew = public_path('files/imageRenamed');
+
                 File::makeDirectory($path, $mode = 0777, true, true);
+                File::makeDirectory($pathNew, $mode = 0777, true, true);
 
                 $skuChoose = $newName = $namesFinalExcel= null;
 
@@ -117,7 +116,7 @@ class HomeController extends Controller
 
                    $namesFinalExcel [] = $newName;
 
-                    #File::move($file, $pathNew.'/'.$newName);
+                   File::move($file, $pathNew.'/'.$newName);
                 }
 
                 $name = 'Rename images files - '. date('Y-m-d') . '.xlsx';
@@ -125,7 +124,7 @@ class HomeController extends Controller
             }
 
         } catch (\Exception $ex) {
-
+            
             Log::error("Order Products Inventories error " .$ex->getMessage().'-'.$ex->getLine());
             return Redirect::back()->withErrors('Your imported excel file is invalid please try again.');
         }
