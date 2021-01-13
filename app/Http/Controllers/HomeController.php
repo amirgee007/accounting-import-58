@@ -119,12 +119,30 @@ class HomeController extends Controller
                    File::move($file, $pathNew.'/'.$newName);
                 }
 
-                $name = 'Rename images files - '. date('Y-m-d') . '.xlsx';
-                return Excel::download(new ProductSkuRenamedListExport($namesFinalExcel), $name);
+
+                $zip_file = 'RenameImagesFiles.zip';
+                $zip = new \ZipArchive();
+                $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($pathNew));
+                foreach ($files as $name => $file)
+                {
+                    // We're skipping all subfolders
+                    if (!$file->isDir()) {
+                        $filePath = $file->getRealPath();
+
+                        // extracting filename with substr/strlen
+                        $relativePath = substr($filePath, strlen($path) + 1);
+
+                        $zip->addFile($filePath, $relativePath);
+                    }
+                }
+                $zip->close();
+                return response()->download($zip_file);
             }
 
         } catch (\Exception $ex) {
-            
+
             Log::error("Order Products Inventories error " .$ex->getMessage().'-'.$ex->getLine());
             return Redirect::back()->withErrors('Your imported excel file is invalid please try again.');
         }

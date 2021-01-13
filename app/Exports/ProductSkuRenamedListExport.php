@@ -19,6 +19,7 @@ class ProductSkuRenamedListExport implements FromView,ShouldAutoSize
 
     public function view(): View
     {
+        #Not used ANYWHERE for now.
         return view('partials.downloadExcelRenameFiles', [
             'names' => $this->names
         ]);
