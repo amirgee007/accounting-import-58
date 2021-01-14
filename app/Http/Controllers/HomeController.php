@@ -130,11 +130,9 @@ class HomeController extends Controller
                     // We're skipping all subfolders
                     if (!$file->isDir()) {
                         $filePath = $file->getRealPath();
+                        $fileName = $file->getFileName();
 
-                        // extracting filename with substr/strlen
-                        $relativePath = substr($filePath, strlen($path) + 1);
-
-                        $zip->addFile($filePath, $relativePath);
+                        $zip->addFile($filePath, $fileName);
                     }
                 }
                 $zip->close();
