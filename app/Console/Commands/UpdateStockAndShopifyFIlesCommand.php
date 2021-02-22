@@ -319,6 +319,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             if(!(substr($singleRow['codigo'], 0, 1) === "0"))
                 $singleRow['codigo'] = '0'.$singleRow['codigo'];
 
+            $finalTags = rtrim($tagsCell,',') . $tags;
+
+            // Display replaced string
+            $finalTags =  str_replace("sin marca", "-", $finalTags);
+
             return [
 
                 'Handle' => $singleRow['codigo'], #done
@@ -326,7 +331,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 'Body' => $titleCell,
                 'Vendor' => $vendorColumn,
                 'Type' => $fatherCategory,
-                'Tags' => rtrim($tagsCell,',') . $tags,
+                'Tags' => $finalTags,
 
                 'Published' => false, #not too important
                 'Option1_Name' => 'Talla',
