@@ -323,6 +323,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             // Display replaced string
             $finalTags =  str_replace("sin marca", "-", $finalTags);
+            $finalTags =  str_replace("Sin Marca", "-", $finalTags);
 
             return [
 
