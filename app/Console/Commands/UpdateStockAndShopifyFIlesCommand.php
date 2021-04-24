@@ -232,6 +232,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $brand = str_replace('#', '', $brand);
 
+            #$brand = str_replace('Studio', 'Studio F', $brand);
+
             $checkLastCharB = $brand ? substr(trim($brand), -2, 1) : '';
 
             if (ctype_space($checkLastCharB)) {
@@ -307,7 +309,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $older = ["SN", "sin marca", "ND", "Amigui", "amigui"];
             $replace = "Sin marca";
-            $newer   = [$replace ,$replace, $replace, $replace, $replace];
+            $newer   = [$replace ,'-', $replace, $replace, $replace];
+            #brand "sin marca" should be "-"  This should be fixed in tags and brand
 
             $vendorColumn = str_replace($older, $newer, $vendor);
 
