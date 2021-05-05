@@ -308,9 +308,9 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $vendor = $sColumnBrandLen > 2 ? $pCellBrand : 'ND';
 
             $older = ["SN", "sin marca", "ND", "Amigui", "amigui"];
-            $replace = "Sin marca";
-            $newer   = [$replace ,'-', $replace, $replace, $replace];
-            #brand "sin marca" should be "-"  This should be fixed in tags and brand
+            $replace = "-";
+            $newer   = [$replace ,$replace, $replace, $replace, $replace];
+            #brand "sin marca" should be "-"  This should be fixed in tags and brand also VENDOR
 
             $vendorColumn = str_replace($older, $newer, $vendor);
 
