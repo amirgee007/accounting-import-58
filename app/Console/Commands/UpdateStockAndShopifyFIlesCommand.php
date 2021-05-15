@@ -232,7 +232,10 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $brand = str_replace('#', '', $brand);
 
-            #$brand = str_replace('Studio', 'Studio F', $brand);
+            $brand = str_replace('Studio', 'Studio F', $brand);
+
+            #Also brand bebe chage it to Bebe -》*Bebe*
+            $brand = str_replace('bebe', 'Bebe', $brand);
 
             $checkLastCharB = $brand ? substr(trim($brand), -2, 1) : '';
 
@@ -326,6 +329,9 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             // Display replaced string
             $finalTags =  str_replace("sin marca", "-", $finalTags);
+            $finalTags =  str_replace("Sin Marca", "-", $finalTags);
+
+            $finalTags =  str_replace("sin Marca", "-", $finalTags);
             $finalTags =  str_replace("Sin Marca", "-", $finalTags);
 
             return [
