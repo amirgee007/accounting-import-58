@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\GlobalEmailAll;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
@@ -12,12 +13,12 @@ class TestController extends Controller
         ini_set('max_execution_time', 30000000); //300 seconds = 5 minutes
 
 
-        $content = 'hi, its amir testing some emails.';
+        $content = 'Hi, Your images has been processed';
 
-        \Mail::to([
-            [ 'email' => 'amir@infcompany.com', 'name' => 'Amir' ],
-        ])->send(new GlobalEmailAll("Some Email testing by AMIR.", $content));
+        $email = Setting::where('key','adminEmail')->first();
 
+        \Mail::to([[ 'email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir' ],
+        ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content));
 
 
         dd('ok nOOOOw');

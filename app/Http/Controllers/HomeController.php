@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Console\Commands\UpdateOnlyShopifyFileCommand;
 use App\Console\Commands\UpdateStockAndShopifyFIlesCommand;
 use App\Exports\ProductSkuRenamedListExport;
 use App\Imports\ProductSkuListImport;
@@ -184,7 +183,7 @@ class HomeController extends Controller
         $data = array_slice($request->all(), 1, 1, true);
 
         Setting::updateOrCreate(['key' => key($data)], ['value' => reset($data)]);
-        session()->flash('app_message', 'Tags has been updated successfully.');
+        session()->flash('app_message', 'Settings has been updated successfully.');
 
         return back();
     }
@@ -254,7 +253,6 @@ class HomeController extends Controller
 
     public function downloadShopifyOutPutExcelFile(){
 
-
         try{
             $path = storage_path('app/temp/Shopify-OUTPUT-FILE-Ready-to-Import123.xlsx');
 
@@ -271,18 +269,18 @@ class HomeController extends Controller
 
         ini_set('max_execution_time', 3600); //900 seconds = 30 minutes
 
-        $jb = new UpdateStockAndShopifyFIlesCommand();
-        $jb->createStockShopifyOutPutExcelFile();
+        # check if there is product sync job
+        $activeJob = SyncJob::activeStatus('stock-export')->first();
 
-        Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
+        if (!$activeJob) {
+            $newSyncJob = SyncJob::create(['type' => 'stock-export']);
+            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
+        }
 
-        SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);
-
-        SyncJob::truncate();
 
         session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
 
-        return back();
+        return \redirect()->route('home');
     }
 
 

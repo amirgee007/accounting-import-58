@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
 use App\Models\AlreadyExistProduct;
 use App\Models\ShopifySizeColor;
 use App\Models\SyncJob;
@@ -63,6 +64,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     public function handle()
     {
+
         # check if there is product sync job
         $activeJob = SyncJob::activeStatus('stock-export')->first();
 
@@ -77,6 +79,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             SyncJob::truncate();
 
         }
+
         else
         {
             Log::warning('Already running job so its skipped NOW...!');
@@ -366,7 +369,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
         }
 
     }
-
 
     public static function isValidDate($date)
     {

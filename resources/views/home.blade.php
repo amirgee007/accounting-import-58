@@ -195,27 +195,27 @@
         });
 
 
-        var timer = null;
-        var time = 0;
-        $('#mybutton').click(function() {
-            time = 1800;
-            showTimer();
-            timer = setInterval(showTimer, 1000);
-        });
-
-        function showTimer() {
-            if (time < 0) {
-                clearInterval(timer);
-                return;
-            }
-            function pad(value) {
-                return (value < 10 ? '0' : '') + value;
-            }
-            $('#timerDiv').text(Math.floor(time / 60) + ':' + pad(time % 60));
-            $('#imageLoader').html('<i class="fa fa-refresh fa-spin" aria-hidden="true"></i>');
-
-            time--;
-        }
+//        var timer = null;
+//        var time = 0;
+//        $('#mybutton').click(function() {
+//            time = 1800;
+//            showTimer();
+//            timer = setInterval(showTimer, 1000);
+//        });
+//
+//        function showTimer() {
+//            if (time < 0) {
+//                clearInterval(timer);
+//                return;
+//            }
+//            function pad(value) {
+//                return (value < 10 ? '0' : '') + value;
+//            }
+//            $('#timerDiv').text(Math.floor(time / 60) + ':' + pad(time % 60));
+//            $('#imageLoader').html('<i class="fa fa-refresh fa-spin" aria-hidden="true"></i>');
+//
+//            time--;
+//        }
 
     </script>
 @stop
