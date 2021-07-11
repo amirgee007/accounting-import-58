@@ -25,7 +25,7 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header">Dashboard (Auto update Hourly) Tax: {{$setting->value}}%
+                    <div class="card-header">Dashboard (Auto update Hourly)-> Tax: {{$tax->value}}%
                         <span class="badge badge-danger float-right">Last Updated file:{{@$lastUpdate->value}}</span></div>
 
                     <div class="card-body">
@@ -62,7 +62,7 @@
 
                         <hr>
 
-                        <form method="post" action="{{route('save.tags')}}">
+                        <form method="post" action="{{route('save.settings')}}">
 
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
@@ -75,12 +75,34 @@
 
                                 <div class="col-md-3">
                                     <button type="submit" class="btn btn-success btn-sm float-right">
-                                        Save Tags Here
+                                        Save All Tags Here
                                     </button>
                                 </div>
 
                             </div>
                         </form>
+
+                        <form method="post" action="{{route('save.settings')}}">
+
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group row">
+                                <label for="name" class="col-md-4 col-form-label text-md-right">Write Email Here</label>
+
+                                <div class="col-md-5">
+                                    <input type="email" value="{{@$email->value}}" class="form-control" placeholder="amir@test.com" name="adminEmail" required>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-success btn-sm float-right">
+                                        Save Admin Email
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+
+
 
                         <hr>
                         <form method="GET" action="{{route('home')}}">

@@ -21,7 +21,7 @@ Route::get('abc/test', 'TestController@index');
 Auth::routes(['register' => false]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/save-tags', 'HomeController@saveTags')->name('save.tags');
+Route::post('/save-settings', 'HomeController@saveSettings')->name('save.settings');
 
 Route::get('logout', 'HomeController@logout')->name('logOutCustom');
 

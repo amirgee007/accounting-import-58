@@ -152,8 +152,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $setting = Setting::where('key','tax')->first();
+        $tax = Setting::where('key','tax')->first();
         $tags = Setting::where('key','tags')->first();
+        $email = Setting::where('key','adminEmail')->first();
 
         $lastUpdate = Setting::where('key','last-change')->first();
         $files = [];
@@ -165,7 +166,7 @@ class HomeController extends Controller
             $files = Storage::files($filenamePath);
         }
 
-        return view('home' ,compact('setting' ,'lastUpdate' ,'files' ,'tags'));
+        return view('home' ,compact('tax' ,'lastUpdate' ,'files' ,'tags' , 'email'));
     }
 
     public function resetAllImages(){
@@ -178,9 +179,11 @@ class HomeController extends Controller
         return back();
     }
 
-    public function saveTags(Request $request){
+    public function saveSettings(Request $request){
 
-        Setting::updateOrCreate(['key' => 'tags'], ['value' => $request->tags]);
+        $data = array_slice($request->all(), 1, 1, true);
+
+        Setting::updateOrCreate(['key' => key($data)], ['value' => reset($data)]);
         session()->flash('app_message', 'Tags has been updated successfully.');
 
         return back();
