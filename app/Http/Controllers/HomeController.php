@@ -251,6 +251,19 @@ class HomeController extends Controller
 
     }
 
+    public function downloadErrorLogsFIle(){
+        try{
+            $path = storage_path('app/temp/Api-Error-Logs.xlsx');
+            return response()->download($path);
+        }
+        catch (\Exception $ex){
+
+            session()->flash('app_error', 'No file found please try to generate file or contact admin.');
+            return back();
+        }
+
+    }
+
     public function downloadShopifyOutPutExcelFile(){
 
         try{

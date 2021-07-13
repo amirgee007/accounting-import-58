@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Exports\ApiLogsExcelFileExport;
 use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
 use App\Models\AlreadyExistProduct;
+use App\Models\ApiErrorLog;
 use App\Models\ShopifySizeColor;
 use App\Models\SyncJob;
 use Illuminate\Console\Command;
@@ -91,6 +93,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
         ini_set('memory_limit', '-1');
 
+        ApiErrorLog::truncate();
+
         $setting = Setting::where('key','tax')->first();
         $settingTags = Setting::where('key','tags')->first();
         $tags = $settingTags ? ','.$settingTags->value : '';
@@ -135,7 +139,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 $page_count++;
 
                 if(is_array($data) && count($data) > 1) {
-
                     foreach ($data as $row){
 
                         $response = $this->getStockFileRow($row);
@@ -149,31 +152,55 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         $filenamePath = ('public/shopify-images/'.trim($row['codigo']));
                         $imagesExistArray = Storage::files($filenamePath);
 
-                        if(count($imagesExistArray) == 0) continue;
+                        if(count($imagesExistArray) == 0) {
+
+                            ApiErrorLog::create([
+                                'codigo_number' => $row['codigo'],
+                                'message' => 'Image not found in the directory.',
+                            ]);
+                            continue;
+                        }
 
                         if($existingProduct == 0) {
                             $response123 = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
 
                             if(is_array($response123)){
-
-                                Log::warning($row['codigo'] .' Processed and also done and here.');
                                 $allDataArrSHopify[] = $response123;
                             }
                         }
+                        else
+                        {
+                            ApiErrorLog::create([
+                                'codigo_number' => $row['codigo'],
+                                'message' => 'Image already exist in the database.',
+                            ]);
+
+                        }
                     }
                 }
-                else
+                else{
+
+                    ApiErrorLog::create([
+                        'codigo_number' => '0',
+                        'message' => 'Api not working fine and we get response nothing.',
+                    ]);
                     break;
+                }
 
             } while ($page_count <= $max_pages);
 
             Storage::deleteDirectory('temp');
 
+            $errors = ApiErrorLog::get()->toArray();
+
             $pathStock = 'temp/PVP-2.xlsx';
             $pathShopify = 'temp/Shopify-OUTPUT-FILE-Ready-to-Import123.xlsx';
+            $pathApiError = 'temp/Api-Error-Logs.xlsx';
 
             Excel::store(new StockFileExport($allDataArrStock), $pathStock);
             Excel::store(new ShopifyImportFileExport($allDataArrSHopify), $pathShopify);
+            Excel::store(new ApiLogsExcelFileExport($errors), $pathApiError);
+
 
             Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
 
@@ -365,6 +392,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
         } catch (\Exception $ex) {
             Log::error($singleRow['codigo'] .' codigo single row error.' . $ex->getMessage() . $ex->getLine());
+
+            ApiErrorLog::create([
+                'codigo_number' => $singleRow['codigo'],
+                'message' => 'Some error during logic '.$ex->getMessage(),
+            ]);
             return null;
         }
 

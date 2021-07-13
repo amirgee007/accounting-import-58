@@ -103,7 +103,6 @@
                         </form>
 
 
-
                         <hr>
                         <form method="GET" action="{{route('home')}}">
 

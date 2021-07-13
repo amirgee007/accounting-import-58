@@ -57,4 +57,9 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'HomeController@downloadStockExcelFIle'
     ]);
 
+    Route::get('/download-error-logs', [
+        'as' => 'download.erroLogs.excel',
+        'uses' => 'HomeController@downloadErrorLogsFIle'
+    ]);
+
 });

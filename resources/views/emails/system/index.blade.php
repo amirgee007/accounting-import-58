@@ -13,7 +13,12 @@ Hi, Andres
     Download Shopify File
 @endcomponent
 
-<br><br>
+<br>
+
+Also if you want download error logs please click here and download the file if exist.
+<a target="_blank" href="{{route('download.erroLogs.excel')}}">HERE</a>
+
+<br>
 Testing Emails <br>
 E-Mail: abc@abc.se
 @endcomponent

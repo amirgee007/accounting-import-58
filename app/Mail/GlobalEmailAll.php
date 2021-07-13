@@ -30,7 +30,7 @@ class GlobalEmailAll extends Mailable
      */
     public function build()
     {
-        $this->from('support@inf.se', 'INF Company');
+        $this->from('abc@abc.se', 'Anonymous');
 
         return $this->markdown('emails.system.index')->with(['content' => $this->content]);
     }

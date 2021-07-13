@@ -41,7 +41,18 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
 
         (new UpdateStockAndShopifyFIlesCommand())->createStockShopifyOutPutExcelFile();
 
-        $content = 'Hi, Your images has been processed';
+        $result_size = 500;
+        $page_count = 1;
+
+        $typeWithParams = "producto?result_size=$result_size&result_page=$page_count";
+
+        $msg = " and Api is working fine.";
+        $data = HttpApiRequest::getContificoApi($typeWithParams);
+
+        if(is_null($data))
+            $msg = " and Api is not working fine.";
+
+        $content = 'Hi, Your images has been processed'.$msg;
 
         $email = Setting::where('key','adminEmail')->first();
 

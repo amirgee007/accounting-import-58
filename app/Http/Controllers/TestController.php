@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ApiLogsExcelFileExport;
 use App\Mail\GlobalEmailAll;
+use App\Models\ApiErrorLog;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TestController extends Controller
 {
