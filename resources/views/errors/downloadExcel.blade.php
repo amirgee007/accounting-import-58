@@ -4,6 +4,7 @@
         <th>Id</th>
         <th>Codigo</th>
         <th>Message</th>
+        <th>Created</th>
     </tr>
     </thead>
     <tbody>
@@ -13,6 +14,7 @@
             <td>{{$product['id']}}</td>
             <td>{{$product['codigo_number']}}</td>
             <td>{{$product['message']}}</td>
+            <td>{{$product['created_at']}}</td>
         </tr>
     @endforeach
 
