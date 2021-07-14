@@ -130,7 +130,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             do {
 
-                Log::debug($page_count. ' Done createStockShopifyOutPutExcelFile count here api');
+                #Log::debug($page_count. ' Done createStockShopifyOutPutExcelFile count here api');
 
                 $typeWithParams = "producto?result_size=$result_size&result_page=$page_count";
 
@@ -154,10 +154,12 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
                         if(count($imagesExistArray) == 0) {
 
-                            ApiErrorLog::create([
+                            $dt = [
                                 'codigo_number' => $row['codigo'],
                                 'message' => 'Image not found in the directory.',
-                            ]);
+                            ];
+
+                            ApiErrorLog::updateOrCreate($dt, $dt);
                             continue;
                         }
 
