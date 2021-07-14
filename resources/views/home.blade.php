@@ -194,13 +194,21 @@
         });
 
 
-//        var timer = null;
-//        var time = 0;
-//        $('#mybutton').click(function() {
+        var timer = null;
+        var time = 0;
+        $('#mybutton').click(function() {
 //            time = 1800;
 //            showTimer();
 //            timer = setInterval(showTimer, 1000);
-//        });
+
+            toastr.success('Job has been scheduled please check in 30 minutes...!');
+
+            setTimeout(function(){
+                window.location.reload(1);
+            }, 5000);
+
+
+        });
 //
 //        function showTimer() {
 //            if (time < 0) {

@@ -280,7 +280,9 @@ class HomeController extends Controller
 
     public function processImagesIntoExcelFile(){
 
-        ini_set('max_execution_time', 3600); //900 seconds = 30 minutes
+        ini_set('max_execution_time', 4000); //900 seconds = 30 minutes
+
+        session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
 
         # check if there is product sync job
         $activeJob = SyncJob::activeStatus('stock-export')->first();
