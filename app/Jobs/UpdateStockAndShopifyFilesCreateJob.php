@@ -28,6 +28,8 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
     public  $syncJobId;
     public  $syncJobType;
 
+    public  $tries  =  3;
+
     public function __construct($jobId, $jobType)
     {
         $this->syncJobId = $jobId;
