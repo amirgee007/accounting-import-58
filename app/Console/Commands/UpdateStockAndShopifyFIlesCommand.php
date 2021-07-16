@@ -203,7 +203,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             Excel::store(new ShopifyImportFileExport($allDataArrSHopify), $pathShopify);
             Excel::store(new ApiLogsExcelFileExport($errors), $pathApiError);
 
-
             Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
 
             SyncJob::where('type', 'stock-export')->update(['status' => 'completed']);

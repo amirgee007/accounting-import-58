@@ -290,10 +290,10 @@ class HomeController extends Controller
         if (!$activeJob) {
             $newSyncJob = SyncJob::create(['type' => 'stock-export']);
             UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
+
+            session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
         }
 
-
-        session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
 
         return \redirect()->route('home');
     }

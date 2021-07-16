@@ -184,6 +184,8 @@
     <script>
         var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
+        var currentUrl = window.location;
+
         Dropzone.autoDiscover = false;
         var myDropzone = new Dropzone(".dropzone",{
             maxFilesize: 1,  // 3 mb
@@ -201,11 +203,12 @@
 //            showTimer();
 //            timer = setInterval(showTimer, 1000);
 
-            toastr.success('Job has been scheduled please check in 30 minutes...!');
+            toastr.warning('Your Job has been scheduled.');
 
             setTimeout(function(){
-                window.location.reload(1);
-            }, 5000);
+                window.open(currentUrl,"_self");
+                return false;
+            }, 3000);
 
 
         });
