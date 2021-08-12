@@ -172,20 +172,26 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                         }
                         else
                         {
-                            ApiErrorLog::create([
+
+                            $dt = [
                                 'codigo_number' => $row['codigo'],
                                 'message' => 'Image already exist in the database.',
-                            ]);
+                            ];
+
+                            ApiErrorLog::updateOrCreate($dt, $dt);
+
 
                         }
                     }
                 }
                 else{
 
-                    ApiErrorLog::create([
+                    $dt = [
                         'codigo_number' => '0',
                         'message' => 'Api not working fine and we get response nothing.',
-                    ]);
+                    ];
+
+                    ApiErrorLog::updateOrCreate($dt, $dt);
                     break;
                 }
 
@@ -394,10 +400,13 @@ class UpdateStockAndShopifyFIlesCommand extends Command
         } catch (\Exception $ex) {
             Log::error($singleRow['codigo'] .' codigo single row error.' . $ex->getMessage() . $ex->getLine());
 
-            ApiErrorLog::create([
+            $dt = [
                 'codigo_number' => $singleRow['codigo'],
                 'message' => 'Some error during logic '.$ex->getMessage(),
-            ]);
+            ];
+
+            ApiErrorLog::updateOrCreate($dt, $dt);
+
             return null;
         }
 
