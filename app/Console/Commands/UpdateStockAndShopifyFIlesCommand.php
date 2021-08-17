@@ -180,20 +180,19 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
                             ApiErrorLog::updateOrCreate($dt, $dt);
 
-
                         }
                     }
                 }
-                else{
-
-                    $dt = [
-                        'codigo_number' => '0',
-                        'message' => 'Api not working fine and we get response nothing.',
-                    ];
-
-                    ApiErrorLog::updateOrCreate($dt, $dt);
-                    break;
-                }
+//                else{
+//
+//                    $dt = [
+//                        'codigo_number' => '0',
+//                        'message' => 'Api not working fine and we get response nothing.',
+//                    ];
+//
+//                    ApiErrorLog::updateOrCreate($dt, $dt);
+//                    break;
+//                }
 
             } while ($page_count <= $max_pages);
 
