@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('abc/test', 'TestController@index');
+Route::get('abc/test2', 'TestController@index2');
 
 
 Auth::routes(['register' => false]);

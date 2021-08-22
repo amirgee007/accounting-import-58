@@ -140,6 +140,7 @@ class HomeController extends Controller
 
         } catch (\Exception $ex) {
 
+
             Log::error("Order Products Inventories error " .$ex->getMessage().'-'.$ex->getLine());
             return Redirect::back()->withErrors('Your imported excel file is invalid please try again.');
         }

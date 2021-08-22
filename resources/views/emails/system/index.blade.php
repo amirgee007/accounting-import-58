@@ -13,12 +13,16 @@ Hi, Andres
     Download Shopify File
 @endcomponent
 
-<br>
+{{--$counter $totalProductProcessed, $totalImagesFound, $totalImagesNotFound,--}}
+@component('mail::table')
+    |Product Processed       | Images Found         | Images Not Found  |
+    | ------------- |:-------------:| --------:|
+    | {{@$counter[0]}}    | {{@$counter[1]}}      | {{@$counter[2]}}      |
+@endcomponent
+###Images not found is due to no INVENTORY.
+{{--<a target="_blank" href="{{route('download.erroLogs.excel')}}">HERE</a>--}}
 
-Also if you want download error logs please click here and download the file if exist.
-<a target="_blank" href="{{route('download.erroLogs.excel')}}">HERE</a>
-
 <br>
-Testing Emails <br>
-E-Mail: abc@abc.se
+AMIGUI.CO email <br>
+abc@abc.se
 @endcomponent

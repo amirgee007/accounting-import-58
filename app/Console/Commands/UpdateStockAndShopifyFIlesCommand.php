@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Exports\ApiLogsExcelFileExport;
 use App\Jobs\UpdateStockAndShopifyFilesCreateJob;
+use App\Mail\GlobalEmailAll;
 use App\Models\AlreadyExistProduct;
 use App\Models\ApiErrorLog;
 use App\Models\ShopifySizeColor;
@@ -80,53 +81,61 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             SyncJob::truncate();
 
-        }
-
-        else
-        {
+        } else {
             Log::warning('Already running job so its skipped NOW...!');
         }
 
     }
 
-    public function createStockShopifyOutPutExcelFile(){
+    public function createStockShopifyOutPutExcelFile()
+    {
 
         ini_set('memory_limit', '-1');
 
         ApiErrorLog::truncate();
 
-        $setting = Setting::where('key','tax')->first();
-        $settingTags = Setting::where('key','tags')->first();
-        $tags = $settingTags ? ','.$settingTags->value : '';
-
-        $categoryArray = $categoryParents = $brandsArray =  [];
-
-        $categoriesResponse = HttpApiRequest::getContificoApi('categoria');
-
-        $brandsResponse = HttpApiRequest::getContificoApi('marca');
-
-        foreach ($categoriesResponse as $category) {
-
-            if($category['padre_id'])
-                $categoryParents[$category['id']] = $category['padre_id'];
-
-            $categoryArray[$category['id']] = trim($category['nombre']);
-        }
-
-        foreach ($brandsResponse as $brand)
-            $brandsArray[$brand['id']] = trim($brand['nombre']);
-
         try {
+
+            $setting = Setting::where('key', 'tax')->first();
+            $settingTags = Setting::where('key', 'tags')->first();
+            $tags = $settingTags ? ',' . $settingTags->value : '';
+
+            $categoryArray = $categoryParents = $brandsArray = [];
+
+            $categoriesResponse = HttpApiRequest::getContificoApi('categoria');
+
+            $brandsResponse = HttpApiRequest::getContificoApi('marca');
+
+            foreach ($categoriesResponse as $category) {
+
+                if ($category['padre_id'])
+                    $categoryParents[$category['id']] = $category['padre_id'];
+
+                $categoryArray[$category['id']] = trim($category['nombre']);
+            }
+
+            foreach ($brandsResponse as $brand)
+                $brandsArray[$brand['id']] = trim($brand['nombre']);
 
             $result_size = 500;
 
+            $files = Storage::allFiles('public/shopify-images/');
+
+            $totalImagesFound = 0;
+            $totalImagesNotFound = 0;
+            $totalProductProcessed = 0;
+
+            if ($totalImagesFound = count($files)) {
+                $totalImagesFound = (int)($totalImagesFound / 2);
+            }
+
             $page_count = 1;
 
-            $max_pages = (env('APP_ENV') == 'local') ?  5 : 1000;
+            $max_pages = (env('APP_ENV') == 'local') ? 5 : 1000;
 
             $taxPercentage = $setting->value;
 
-            $allDataArrStock  = $allDataArrSHopify = [];
+            $allDataArrStock = $allDataArrSHopify = [];
 
             do {
 
@@ -138,49 +147,53 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
                 $page_count++;
 
-                if(is_array($data) && count($data) > 1) {
-                    foreach ($data as $row){
+                if (is_array($data) && count($data) > 1) {
+                    foreach ($data as $row) {
+
+                        $totalProductProcessed++;
 
                         $response = $this->getStockFileRow($row);
 
-                        if($response)
+                        if ($response)
                             $allDataArrStock[] = $response;
 
-                        $matching = ltrim(trim($row['codigo'])  ,'0');
-                        $existingProduct = AlreadyExistProduct::where('codigo' ,'like',"%$matching%")->count();
+                        $matching = ltrim(trim($row['codigo']), '0');
+                        $existingProduct = AlreadyExistProduct::where('codigo', 'like', "%$matching%")->count();
 
-                        $filenamePath = ('public/shopify-images/'.trim($row['codigo']));
+                        $filenamePath = ('public/shopify-images/' . trim($row['codigo']));
                         $imagesExistArray = Storage::files($filenamePath);
 
-                        if(count($imagesExistArray) == 0) {
+                        if (count($imagesExistArray) == 0) {
 
-                            $dt = [
-                                'codigo_number' => $row['codigo'],
-                                'message' => 'Image not found in the directory.',
-                            ];
+//                            $dt = [
+//                                'codigo_number' => $row['codigo'],
+//                                'message' => 'Image not found in the directory.',
+//                            ];
+//
+//                            ApiErrorLog::updateOrCreate($dt, $dt);
+//                            continue;
 
-                            ApiErrorLog::updateOrCreate($dt, $dt);
-                            continue;
+                            $totalImagesNotFound++;
                         }
 
-                        if($existingProduct == 0) {
-                            $response123 = $this->getShopifyFileRow($row ,$categoryArray ,$categoryParents,$brandsArray ,$imagesExistArray, $tags);
+                        $response123 = $this->getShopifyFileRow($row, $categoryArray, $categoryParents, $brandsArray, $imagesExistArray, $tags);
 
-                            if(is_array($response123)){
-                                $allDataArrSHopify[] = $response123;
-                            }
+                        if (is_array($response123)) {
+                            $allDataArrSHopify[] = $response123;
                         }
-                        else
-                        {
 
-                            $dt = [
-                                'codigo_number' => $row['codigo'],
-                                'message' => 'Image already exist in the database.',
-                            ];
-
-                            ApiErrorLog::updateOrCreate($dt, $dt);
-
-                        }
+//                        if($existingProduct == 0) {}
+//                        else
+//                        {
+//
+//                            $dt = [
+//                                'codigo_number' => $row['codigo'],
+//                                'message' => 'Image already exist in the database.',
+//                            ];
+//
+//                            ApiErrorLog::updateOrCreate($dt, $dt);
+//
+//                        }
                     }
                 }
 //                else{
@@ -202,11 +215,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $pathStock = 'temp/PVP-2.xlsx';
             $pathShopify = 'temp/Shopify-OUTPUT-FILE-Ready-to-Import123.xlsx';
-            $pathApiError = 'temp/Api-Error-Logs.xlsx';
+            #$pathApiError = 'temp/Api-Error-Logs.xlsx';
 
             Excel::store(new StockFileExport($allDataArrStock), $pathStock);
             Excel::store(new ShopifyImportFileExport($allDataArrSHopify), $pathShopify);
-            Excel::store(new ApiLogsExcelFileExport($errors), $pathApiError);
+            #Excel::store(new ApiLogsExcelFileExport($errors), $pathApiError);
 
             Setting::updateOrCreate(['key' => 'last-change'], ['value' => now()->toDateTimeString()]);
 
@@ -214,14 +227,45 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             Log::alert('createStockFileShopify Created successfully....!');
 
+
+            $result_size = 500;
+            $page_count = 1;
+
+            $typeWithParams = "producto?result_size=$result_size&result_page=$page_count";
+
+            $msg = " and Api is WORKING fine last checked at ." . now()->toDateTimeString();
+            $data = HttpApiRequest::getContificoApi($typeWithParams);
+
+            if (is_null($data))
+                $msg = " and Api is NOT WORKING fine at " . now()->toDateTimeString();
+
+            $content = 'Hi, Your images has been processed' . $msg;
+
+            $email = Setting::where('key', 'adminEmail')->first();
+
+            $counter = [
+                $totalProductProcessed,
+                $totalImagesFound,
+                $totalImagesNotFound,
+            ];
+
+            \Mail::to([['email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir'],
+            ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content, $counter));
+
+            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New');
+
+            SyncJob::truncate();
+
+
         } catch (\Exception $ex) {
-            Log::error(' JOB FAILED createStockFileShopify. '.$ex->getMessage() . $ex->getLine());
+            Log::error(' JOB FAILED createStockFileShopify. ' . $ex->getMessage() . $ex->getLine());
             SyncJob::where('type', 'stock-export')->update(['status' => 'failed']);
         }
 
     }
 
-    public function getStockFileRow($singleRow){
+    public function getStockFileRow($singleRow)
+    {
 
         try {
 
@@ -243,12 +287,12 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     }
 
-    public function getShopifyFileRow($singleRow, $categoriesArray ,$parentCategory ,$brandsArrayHere ,$images ,$tags)
+    public function getShopifyFileRow($singleRow, $categoriesArray, $parentCategory, $brandsArrayHere, $images, $tags)
     {
 
         try {
 
-            $subCategory = $fatherCategory = $brand  = $pCellBrand = $gender = '';
+            $subCategory = $fatherCategory = $brand = $pCellBrand = $gender = '';
 
             $taxPercentage = $singleRow['porcentaje_iva'] ? $singleRow['porcentaje_iva'] : 0;
 
@@ -259,7 +303,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 $fatherCategory = @$categoriesArray[@$parentCategory[$singleRow['categoria_id']]];
             }
 
-            if ($singleRow['marca_id']){
+            if ($singleRow['marca_id']) {
                 $brand = @$brandsArrayHere[$singleRow['marca_id']];
             }
 
@@ -286,10 +330,10 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             }
 
 
-            $brandForTags = $pCellBrand ? (','.$pCellBrand) : '';
+            $brandForTags = $pCellBrand ? (',' . $pCellBrand) : '';
 
             $edadAge = self::isValidDate($singleRow['descripcion']) ? Carbon::parse($singleRow['descripcion']) : null;
-            $edadDatePatternColumn = $edadAge ? (','.$this->monthsSpanish[$edadAge->format('F')] . '-' . $edadAge->format('y')) : '';
+            $edadDatePatternColumn = $edadAge ? (',' . $this->monthsSpanish[$edadAge->format('F')] . '-' . $edadAge->format('y')) : '';
 
             $sColumnBrandLen = strlen($pCellBrand);
             $tColumnTypeLen = strlen($fatherCategory);
@@ -303,52 +347,52 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             if (ctype_space($checkLastChar)) {
 
                 $lastChar = substr($iCellCategory, -1);
-                $categoryWithoutGender =  substr_replace(trim($iCellCategory) ,"",-2);
+                $categoryWithoutGender = substr_replace(trim($iCellCategory), "", -2);
 
                 $gender = ($lastChar == 'M') ? ' Masculino' : ' Femenino';
-                $iCellCategory =  substr_replace(trim($iCellCategory) ,$gender,-2);
+                $iCellCategory = substr_replace(trim($iCellCategory), $gender, -2);
             }
 
-            $titleCell = ($iCellCategory . ($sColumnBrandLen > 2 ? (' '.$pCellBrand) : ''));
+            $titleCell = ($iCellCategory . ($sColumnBrandLen > 2 ? (' ' . $pCellBrand) : ''));
 
             #remove single char from the TYPE too
             $checkLastChar = substr(trim($fatherCategory), -2, 1);
             if (ctype_space($checkLastChar)) {
-                $fatherCategory =  substr_replace(trim($fatherCategory) ,"",-2);
+                $fatherCategory = substr_replace(trim($fatherCategory), "", -2);
             }
 
             if (strpos($fatherCategory, ' F ') !== false)
-                $fatherCategory =  str_replace(" F "," Femenino ",$fatherCategory);
+                $fatherCategory = str_replace(" F ", " Femenino ", $fatherCategory);
 
-            elseif(strpos($fatherCategory, ' M ') !== false)
-                $fatherCategory =  str_replace(" M "," Masculino ",$fatherCategory);
+            elseif (strpos($fatherCategory, ' M ') !== false)
+                $fatherCategory = str_replace(" M ", " Masculino ", $fatherCategory);
 
 
             if (strpos($titleCell, ' F ') !== false)
-                $titleCell =  str_replace(" F "," Femenino ",$titleCell);
+                $titleCell = str_replace(" F ", " Femenino ", $titleCell);
 
-            elseif(strpos($titleCell, ' M ') !== false)
-                $titleCell =  str_replace(" M "," Masculino ",$titleCell);
+            elseif (strpos($titleCell, ' M ') !== false)
+                $titleCell = str_replace(" M ", " Masculino ", $titleCell);
 
 
             $titleCell = trim($titleCell);
 
-            $sizeColor = ShopifySizeColor::where('codigo' ,$singleRow['codigo'])->first();
+            $sizeColor = ShopifySizeColor::where('codigo', $singleRow['codigo'])->first();
 
             #new two fields added here
 
-            $newTagsPersonalizado = $singleRow['personalizado1'] ? (','.$singleRow['personalizado1'] . ',' . $singleRow['personalizado2']) : '';
+            $newTagsPersonalizado = $singleRow['personalizado1'] ? (',' . $singleRow['personalizado1'] . ',' . $singleRow['personalizado2']) : '';
 
             //$newTagsPersonalizado = $sizeColor ? (',' . $sizeColor->size . ',' . $sizeColor->color) : '';
 
-            $fatherCategoryTag = $fatherCategory ? (','.$fatherCategory) : '';
-            $tagsCell = $categoryWithoutGender . $fatherCategoryTag . $brandForTags .$newTagsPersonalizado. $edadDatePatternColumn;
+            $fatherCategoryTag = $fatherCategory ? (',' . $fatherCategory) : '';
+            $tagsCell = $categoryWithoutGender . $fatherCategoryTag . $brandForTags . $newTagsPersonalizado . $edadDatePatternColumn;
 
             $vendor = $sColumnBrandLen > 2 ? $pCellBrand : 'ND';
 
             $older = ["SN", "sin marca", "ND", "Amigui", "amigui"];
             $replace = "-";
-            $newer   = [$replace ,$replace, $replace, $replace, $replace];
+            $newer = [$replace, $replace, $replace, $replace, $replace];
             #brand "sin marca" should be "-"  This should be fixed in tags and brand also VENDOR
 
             $vendorColumn = str_replace($older, $newer, $vendor);
@@ -358,17 +402,17 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             },
                 $images);
 
-            if(!(substr($singleRow['codigo'], 0, 1) === "0"))
-                $singleRow['codigo'] = '0'.$singleRow['codigo'];
+            if (!(substr($singleRow['codigo'], 0, 1) === "0"))
+                $singleRow['codigo'] = '0' . $singleRow['codigo'];
 
-            $finalTags = rtrim($tagsCell,',') . $tags;
+            $finalTags = rtrim($tagsCell, ',') . $tags;
 
             // Display replaced string
-            $finalTags =  str_replace("sin marca", "-", $finalTags);
-            $finalTags =  str_replace("Sin Marca", "-", $finalTags);
+            $finalTags = str_replace("sin marca", "-", $finalTags);
+            $finalTags = str_replace("Sin Marca", "-", $finalTags);
 
-            $finalTags =  str_replace("sin Marca", "-", $finalTags);
-            $finalTags =  str_replace("Sin Marca", "-", $finalTags);
+            $finalTags = str_replace("sin Marca", "-", $finalTags);
+            $finalTags = str_replace("Sin Marca", "-", $finalTags);
 
             return [
 
@@ -392,16 +436,16 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 'V_Price' => round($priceWithTax, 4),
                 'V_Requires_Shipping' => true,
                 'V_Taxable' => true,
-                'imagen_Calc' => implode(';',$images)
+                'imagen_Calc' => implode(';', $images)
             ];
 
 
         } catch (\Exception $ex) {
-            Log::error($singleRow['codigo'] .' codigo single row error.' . $ex->getMessage() . $ex->getLine());
+            Log::error($singleRow['codigo'] . ' codigo single row error.' . $ex->getMessage() . $ex->getLine());
 
             $dt = [
                 'codigo_number' => $singleRow['codigo'],
-                'message' => 'Some error during logic '.$ex->getMessage(),
+                'message' => 'Some error during logic ' . $ex->getMessage(),
             ];
 
             ApiErrorLog::updateOrCreate($dt, $dt);
@@ -422,7 +466,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
         }
     }
 
-    public static function getCat2Data($string){
+    public static function getCat2Data($string)
+    {
 
         try {
             preg_match('#\((.*?)\)#', $string, $match);

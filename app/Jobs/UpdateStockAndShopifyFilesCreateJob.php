@@ -42,28 +42,6 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
         Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New');
 
         (new UpdateStockAndShopifyFIlesCommand())->createStockShopifyOutPutExcelFile();
-
-        $result_size = 500;
-        $page_count = 1;
-
-        $typeWithParams = "producto?result_size=$result_size&result_page=$page_count";
-
-        $msg = " and Api is working fine.";
-        $data = HttpApiRequest::getContificoApi($typeWithParams);
-
-        if(is_null($data))
-            $msg = " and Api is not working fine.";
-
-        $content = 'Hi, Your images has been processed'.$msg;
-
-        $email = Setting::where('key','adminEmail')->first();
-
-        \Mail::to([[ 'email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir' ],
-        ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content));
-
-        Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New');
-
-        SyncJob::truncate();
     }
 
     public function failed(\Exception $exception)

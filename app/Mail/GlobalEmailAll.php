@@ -16,11 +16,12 @@ class GlobalEmailAll extends Mailable
      *
      * @return void
      */
-    public  $content;
-    public function __construct($subject, $content)
+    public  $content,$counter;
+    public function __construct($subject, $content , $counter = [])
     {
         $this->content = $content;
         $this->subject = $subject;
+        $this->counter = $counter;
     }
 
     /**
