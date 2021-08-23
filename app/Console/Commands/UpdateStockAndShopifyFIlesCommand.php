@@ -170,10 +170,10 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 //                                'message' => 'Image not found in the directory.',
 //                            ];
 //
-//                            ApiErrorLog::updateOrCreate($dt, $dt);
-//                            continue;
+//                          ApiErrorLog::updateOrCreate($dt, $dt);
 
                             $totalImagesNotFound++;
+                            continue;
                         }
 
                         $response123 = $this->getShopifyFileRow($row, $categoryArray, $categoryParents, $brandsArray, $imagesExistArray, $tags);
