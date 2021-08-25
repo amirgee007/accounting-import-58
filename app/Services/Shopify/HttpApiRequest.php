@@ -2,6 +2,7 @@
 
 namespace App\Services\Shopify;
 
+use App\Models\SyncJob;
 use Illuminate\Support\Facades\Log;
 
 
@@ -26,6 +27,8 @@ class HttpApiRequest
 
         } catch (\Exception $ex) {
             Log::error('getContificoApi API '. $type. $ex->getMessage() . $ex->getLine() . $ex->getFile());
+            SyncJob::truncate();
+
             return null;
         }
     }
