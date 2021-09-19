@@ -87,7 +87,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     }
 
-    public function createStockShopifyOutPutExcelFile()
+    public function createStockShopifyOutPutExcelFile($btnClick = 0)
     {
 
         ini_set('memory_limit', '-1');
@@ -249,8 +249,10 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 $totalImagesNotFound,
             ];
 
-            \Mail::to([['email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir'],
-            ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content, $counter));
+            if($btnClick){
+                \Mail::to([['email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir'],
+                ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content, $counter));
+            }
 
             Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New');
 

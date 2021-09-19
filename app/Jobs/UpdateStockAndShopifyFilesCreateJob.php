@@ -27,13 +27,15 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
     protected $count = 0;
     public  $syncJobId;
     public  $syncJobType;
+    public  $btnClick;
 
     public  $tries  =  3;
 
-    public function __construct($jobId, $jobType)
+    public function __construct($jobId, $jobType, $btnClick)
     {
         $this->syncJobId = $jobId;
         $this->syncJobType = $jobType;
+        $this->btnClick = $btnClick;
     }
 
 
@@ -41,7 +43,7 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
 
         Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New');
 
-        (new UpdateStockAndShopifyFIlesCommand())->createStockShopifyOutPutExcelFile();
+        (new UpdateStockAndShopifyFIlesCommand())->createStockShopifyOutPutExcelFile($this->btnClick);
     }
 
     public function failed(\Exception $exception)

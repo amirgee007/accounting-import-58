@@ -279,7 +279,7 @@ class HomeController extends Controller
         }
     }
 
-    public function processImagesIntoExcelFile(){
+    public function processImagesIntoExcelFile($btnClick = 0){
 
         ini_set('max_execution_time', 4000); //900 seconds = 30 minutes
 
@@ -290,7 +290,7 @@ class HomeController extends Controller
 
         if (!$activeJob) {
             $newSyncJob = SyncJob::create(['type' => 'stock-export']);
-            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type);
+            UpdateStockAndShopifyFilesCreateJob::dispatch($newSyncJob->id, $newSyncJob->type , $btnClick);
 
             session()->flash('app_message', 'Your cron job has been scheduled and starting soon please wait.');
         }

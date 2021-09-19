@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'HomeController@renameFilesSku'
     ]);
 
-    Route::get('/process-images-into-shopify', [
+    Route::get('/process-images-into-shopify/{btnClick?}', [
         'as' => 'process.images.files.excel',
         'uses' => 'HomeController@processImagesIntoExcelFile'
     ]);

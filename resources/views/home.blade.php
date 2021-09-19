@@ -48,7 +48,7 @@
                                     <i class="fa fa-download" aria-hidden="true"></i> Download Shopify File
                                 </a>
 
-                                <a id="mybutton" href="{{route('process.images.files.excel')}}" class="btn btn-sm btn-danger processImages">
+                                <a id="mybutton" href="{{route('process.images.files.excel' , 1)}}" class="btn btn-sm btn-danger processImages">
                                     <span id="imageLoader"><i class="fa fa-refresh" aria-hidden="true"></i></span> Process images into XLS
                                 </a>
 
