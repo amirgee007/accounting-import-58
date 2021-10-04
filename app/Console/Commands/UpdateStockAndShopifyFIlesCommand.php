@@ -98,6 +98,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $setting = Setting::where('key', 'tax')->first();
             $settingTags = Setting::where('key', 'tags')->first();
+
             $tags = $settingTags ? ',' . $settingTags->value : '';
 
             $categoryArray = $categoryParents = $brandsArray = [];

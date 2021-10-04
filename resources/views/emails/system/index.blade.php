@@ -22,7 +22,8 @@ Hi, Andres
 ###Images not found is due to no INVENTORY.
 {{--<a target="_blank" href="{{route('download.erroLogs.excel')}}">HERE</a>--}}
 
+
 <br>
-AMIGUI.CO email <br>
-abc@abc.se
+Amigui Laravel <br>
+info@amigui.com.ec
 @endcomponent
