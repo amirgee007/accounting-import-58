@@ -336,6 +336,9 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             $brandForTags = $pCellBrand ? (',' . $pCellBrand) : '';
 
             $edadAge = self::isValidDate($singleRow['descripcion']) ? Carbon::parse($singleRow['descripcion']) : null;
+
+            Log::notice($singleRow['descripcion'] . ' its DATE here and ' );
+
             $edadDatePatternColumn = $edadAge ? (',' . $this->monthsSpanish[$edadAge->format('F')] . '-' . $edadAge->format('y')) : '';
 
             $sColumnBrandLen = strlen($pCellBrand);
@@ -465,6 +468,8 @@ class UpdateStockAndShopifyFIlesCommand extends Command
             Carbon::parse($date);
             return true;
         } catch (\Exception $e) {
+
+            Log::warning($date . ' this date is invalid for the APPLICATION so need to check something');
             return false;
         }
     }
