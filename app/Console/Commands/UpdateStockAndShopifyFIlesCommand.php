@@ -252,7 +252,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             if($btnClick){
                 \Mail::to([['email' => $email ? $email->value : 'amirseersol@gmail.com', 'name' => 'Amir'],
-                ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed.", $content, $counter));
+                ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed NEW jan 2022.", $content, $counter));
             }
 
             Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New');
@@ -465,6 +465,9 @@ class UpdateStockAndShopifyFIlesCommand extends Command
     {
 
         try {
+
+            Log::info($date . ' this date is invalid for the APPLICATION so need to check something');
+
             Carbon::parse($date);
             return true;
         } catch (\Exception $e) {
