@@ -64,7 +64,6 @@ class UpdateStockAndShopifyFIlesCommand extends Command
         'December' => 'Diciembre',
     ];
 
-
     public function handle()
     {
 
@@ -335,7 +334,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
             $brandForTags = $pCellBrand ? (',' . $pCellBrand) : '';
 
-            $edadAge = self::isValidDate($singleRow['descripcion']) ? Carbon::parse($singleRow['descripcion']) : null;
+            $edadAge = self::isValidDate($singleRow['descripcion']);
 
             Log::notice($singleRow['descripcion'] . ' its DATE here and ' );
 
@@ -461,19 +460,41 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
     }
 
-    public static function isValidDate($date)
+    public static function isValidDate($dateInput)
     {
 
         try {
 
+            $date = null;
+
+            $dateFound = explode('-' , $dateInput);
+
+            $monthsShort = [
+                'Jan' => 'ENE',
+                'Feb' => 'FEB',
+                'Mar' => 'MAR',
+                'Apr' => 'ABR',
+                'May' => 'MAYO',
+                'June' => 'JUN',
+                'July' => 'JUL',
+                'Aug' => 'AGOSTO',
+                'Sept' => 'SET',
+                'Oct' => 'OCT',
+                'Nov' => 'NOV',
+                'Dec' => 'DIC',
+            ];
+
+            if(isset($dateFound[0]) && in_array($dateFound[0] ,$monthsShort)) {
+                $month = array_search($dateFound[0], $monthsShort);
+                $date = Carbon::createFromFormat('M-Y', $month.'-'.$dateFound[1]);
+            }
+
             Log::info($date . ' this date is invalid for the APPLICATION so need to check something');
+            return $date;
 
-            Carbon::parse($date);
-            return true;
         } catch (\Exception $e) {
-
-            Log::warning($date . ' this date is invalid for the APPLICATION so need to check something');
-            return false;
+            #Log::warning($date . ' this date is invalid for the APPLICATION so need to check something');
+            return null;
         }
     }
 
