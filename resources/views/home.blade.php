@@ -25,7 +25,7 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header">Dashboard (Auto update Hourly)-> Tax: {{$tax->value}}%
+                    <div class="card-header">Dashboard (Auto update Hourly 2022)-> Tax2022: {{$tax->value}}%
                         <span class="badge badge-danger float-right">Last Updated file:{{@$lastUpdate->value}}</span></div>
 
                     <div class="card-body">
