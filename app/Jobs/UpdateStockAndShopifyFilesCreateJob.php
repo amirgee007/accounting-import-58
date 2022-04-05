@@ -41,7 +41,7 @@ class UpdateStockAndShopifyFilesCreateJob implements ShouldQueue
 
     public function handle(){
 
-        Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New feb2022');
+        Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New April');
 
         (new UpdateStockAndShopifyFIlesCommand())->createStockShopifyOutPutExcelFile($this->btnClick);
     }

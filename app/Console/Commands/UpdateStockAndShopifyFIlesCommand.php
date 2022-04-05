@@ -72,11 +72,11 @@ class UpdateStockAndShopifyFIlesCommand extends Command
 
         if (!$activeJob) {
 
-            Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New feb2022');
+            Log::emergency(now()->toDateTimeString() . ' started updated JOB now for all the things...!New April');
 
             $this->createStockShopifyOutPutExcelFile();
 
-            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New feb2022');
+            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New April');
 
             SyncJob::truncate();
 
@@ -254,7 +254,7 @@ class UpdateStockAndShopifyFIlesCommand extends Command
                 ])->bcc('amirseersol@gmail.com')->send(new GlobalEmailAll("Images has been processed NEW feb 2022.", $content, $counter));
             }
 
-            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New feb2022');
+            Log::emergency(now()->toDateTimeString() . ' Finish updated JOB now for all the things...!New April');
 
             SyncJob::truncate();
 
